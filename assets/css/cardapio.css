@@ -1,0 +1,199 @@
+/* ─── CARDÁPIO ─── */
+.CARDAPIO {
+  padding: 80px 24px 100px;
+}
+
+.cardapio-BOX {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 52px;
+}
+
+.section-header::before {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 2px;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.cardapio-TITULO {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.cardapio-TITULO i {
+  color: var(--primary);
+  font-style: italic;
+}
+
+.cardapio-ITENS {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.marmita {
+  background: var(--bg-card);
+  border: 1px solid var(--text-faint);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+  position: relative;
+}
+
+.marmita::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-hover);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.marmita:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+.marmita:hover::after { opacity: 1; }
+
+.img-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 210px;
+}
+
+.IMG-marmita {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.marmita:hover .IMG-marmita { transform: scale(1.06); }
+
+.img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+}
+
+.marmita-content {
+  padding: 18px 20px 22px;
+}
+
+.cardapio-nome {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+.opcoes-compra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Preço {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.02em;
+}
+
+.Comprar {
+  padding: 9px 20px;
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: var(--transition);
+}
+
+.Comprar:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.35);
+}
+
+.Comprar:active { transform: translateY(0); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .CARDAPIO {
+    padding: 60px 16px 80px;
+  }
+
+  .section-header {
+    margin-bottom: 36px;
+    gap: 14px;
+  }
+
+  .section-header::before {
+    width: 32px;
+  }
+
+  .cardapio-ITENS {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .img-wrapper {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .CARDAPIO {
+    padding: 48px 12px 64px;
+  }
+
+  .img-wrapper {
+    height: 180px;
+  }
+
+  .marmita-content {
+    padding: 14px 16px 18px;
+  }
+
+  .cardapio-nome {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .Preço {
+    font-size: 1.05rem;
+  }
+
+  .Comprar {
+    padding: 8px 14px;
+    font-size: 0.72rem;
+  }
+}

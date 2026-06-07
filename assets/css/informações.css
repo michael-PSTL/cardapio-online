@@ -1,0 +1,256 @@
+/* ─── LOCALIZAÇÃO ─── */
+.LOCALIZACAO {
+  padding: 80px 24px 100px;
+  background: var(--bg-deep);
+  border-top: 1px solid var(--text-faint);
+  border-bottom: 1px solid var(--text-faint);
+}
+
+.localização-TITULO {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  text-align: left;
+  max-width: 1280px;
+  margin: 0 auto 52px;
+}
+
+.localização-TITULO i {
+  color: var(--primary);
+  font-style: italic;
+}
+
+.localização-BOX {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 28px;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.INFORMAÇÕES-Texto {
+  background: var(--bg-card);
+  border: 1px solid var(--text-faint);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+}
+
+.info-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--text-faint);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-item:first-child { padding-top: 0; }
+
+.localização-INFORMAÇÕES {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.informações {
+  font-size: 1rem;
+  color: var(--text);
+  font-style: normal;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.INFORMAÇÕES-Imagem {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.IMG {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ImagemLocal {
+  width: 100%;
+  height: 155px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  display: block;
+  background: var(--bg-surface);
+}
+
+.IFRAME iframe {
+  width: 100%;
+  height: 300px;
+  border-radius: var(--radius-lg);
+  display: block;
+  border: 0;
+  filter: saturate(0.7) contrast(1.1) brightness(0.9);
+}
+
+/* ─── FOOTER CONTATO ─── */
+.CONTATO {
+  padding: 80px 24px 60px;
+  background: var(--bg-void);
+}
+
+.contato-TITULO {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.contato-TITULO i {
+  color: var(--primary);
+  font-style: italic;
+}
+
+.contato-BOX {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.app-image {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--text-faint);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.app-image:hover {
+  border-color: rgba(255,107,0,0.4);
+  background: rgba(255,107,0,0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255,107,0,0.12);
+}
+
+.image-contato {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.app-image i {
+  font-style: normal;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 960px) {
+  .localização-BOX {
+    grid-template-columns: 1fr;
+  }
+
+  .INFORMAÇÕES-Texto {
+    padding: 28px;
+  }
+
+  .IFRAME iframe {
+    height: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .LOCALIZACAO {
+    padding: 60px 16px 80px;
+  }
+
+  .localização-TITULO {
+    margin-bottom: 36px;
+  }
+
+  .INFORMAÇÕES-Texto {
+    padding: 22px 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .CONTATO {
+    padding: 60px 16px 60px;
+  }
+
+  .contato-TITULO {
+    margin-bottom: 36px;
+  }
+
+  .contato-BOX {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .LOCALIZACAO {
+    padding: 48px 12px 64px;
+  }
+
+  .localização-BOX {
+    gap: 16px;
+  }
+
+  .IMG {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .ImagemLocal {
+    height: 180px;
+  }
+
+  .IFRAME iframe {
+    height: 220px;
+    border-radius: var(--radius-md);
+  }
+
+  .INFORMAÇÕES-Texto {
+    padding: 18px 16px;
+  }
+
+  .info-item {
+    padding: 13px 0;
+  }
+
+  .informações {
+    font-size: 0.925rem;
+  }
+
+  .CONTATO {
+    padding: 48px 12px 48px;
+  }
+
+  .app-image {
+    padding: 13px 20px;
+    width: 100%;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+  }
+
+  .contato-BOX {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

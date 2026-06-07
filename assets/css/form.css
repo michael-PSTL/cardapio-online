@@ -1,0 +1,440 @@
+/* ─── FORMULÁRIO OVERLAY ─── */
+.formulario {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: none;
+}
+
+form#pedido-form {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,107,0,0.15);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 60px rgba(255,107,0,0.05);
+}
+
+form#pedido-form::-webkit-scrollbar { width: 3px; }
+form#pedido-form::-webkit-scrollbar-track { background: transparent; }
+form#pedido-form::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+/* ─── CABEÇALHO ─── */
+.form-header {
+  margin-bottom: 26px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--text-faint);
+}
+
+.marmita-tittle {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.form-header p {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* ─── SEÇÕES ─── */
+.section { margin-bottom: 22px; }
+
+.section-tittle,
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.section-tittle::before,
+.section-title::before {
+  content: '';
+  width: 3px;
+  height: 13px;
+  background: var(--primary);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ─── INPUT NOME ─── */
+.input-nome {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--text-faint);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.input-nome::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.input-nome:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255,107,0,0.03);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.09);
+}
+
+.input-nome:not(:placeholder-shown) {
+  border-color: rgba(255,107,0,0.4);
+  color: var(--text);
+}
+
+/* ─── RADIO GROUP ─── */
+.radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.radio-option {
+  position: relative;
+  flex: 1;
+  min-width: 110px;
+}
+
+.radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 12px;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--text-faint);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.radio-label:hover {
+  border-color: rgba(255,107,0,0.3);
+  background: rgba(255,107,0,0.03);
+}
+
+.radio-option input:checked + .radio-label {
+  border-color: var(--primary);
+  background: rgba(255,107,0,0.07);
+}
+
+.radio-label .name {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.radio-label .price {
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.radio-option input:checked + .radio-label .name { color: var(--primary); }
+
+/* ─── DROPDOWN BEBIDA ─── */
+.dropdown {
+  background: var(--bg-raised);
+  border: 1.5px solid var(--text-faint);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.dropdown:hover { border-color: rgba(255,107,0,0.25); }
+.dropdown.open  { border-color: rgba(255,107,0,0.5); }
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropdown-header span { color: var(--text-muted); font-size: 0.875rem; }
+.dropdown-header .selected-text { color: var(--text); }
+
+.dropdown-arrow {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-muted);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.dropdown.open .dropdown-content { max-height: 260px; }
+
+.dropdown-options {
+  padding: 8px;
+  border-top: 1px solid var(--text-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dropdown-option { position: relative; }
+
+.dropdown-option input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.dropdown-option label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.dropdown-option label:hover {
+  background: var(--bg-surface);
+  border-color: var(--text-faint);
+}
+
+.dropdown-option input:checked + label {
+  background: rgba(255,107,0,0.07);
+  border-color: rgba(255,107,0,0.3);
+}
+
+.drink-name {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.dropdown-option input:checked + label .drink-name { color: var(--primary); }
+
+.drink-price {
+  color: #3a3530;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.dropdown-option input:checked + label .drink-price { color: var(--primary-light); }
+
+/* ─── ENDEREÇO ─── */
+.endereco-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, margin 0.35s ease;
+}
+
+.endereco-container.visible {
+  max-height: 280px;
+  margin-top: 14px;
+}
+
+.endereco-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ─── INPUTS GENÉRICOS ─── */
+.input-field {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--text-faint);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  transition: var(--transition);
+}
+
+.input-field::placeholder { color: var(--text-muted); }
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255,107,0,0.03);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.07);
+}
+
+textarea.input-field {
+  resize: vertical;
+  min-height: 75px;
+}
+
+/* ─── DIVISOR ─── */
+.divider {
+  height: 1px;
+  background: var(--text-faint);
+  margin: 20px 0;
+}
+
+/* ─── TOTAL ─── */
+.total-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px;
+  background: var(--bg-raised);
+  border: 1.5px solid rgba(255,107,0,0.15);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+.total-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.total-value {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 4px;
+  letter-spacing: -0.03em;
+}
+
+.total-breakdown {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ─── BOTÕES ─── */
+.form-footer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  padding: 13px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.btn-cancel {
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  border: 1.5px solid var(--text-faint);
+  white-space: nowrap;
+}
+
+.btn-cancel:hover {
+  background: var(--bg-surface);
+  color: var(--text);
+  border-color: rgba(255,107,0,0.3);
+}
+
+.btn-submit {
+  background: var(--primary);
+  color: #fff;
+  flex: 1;
+}
+
+.btn-submit:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(255,107,0,0.35);
+}
+
+.btn-submit:active { transform: translateY(0); }
+
+/* ─── RESPONSIVO ─── */
+@media (max-width: 520px) {
+  form#pedido-form {
+    max-width: calc(100vw - 24px);
+    padding: 24px 18px;
+    border-radius: var(--radius-lg);
+    max-height: 92vh;
+  }
+}
+
+@media (max-width: 480px) {
+  form#pedido-form {
+    padding: 22px 16px;
+    max-height: 95vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .marmita-tittle { font-size: 1.15rem; }
+
+  .form-footer { flex-direction: column; }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .radio-option { min-width: 100%; }
+
+  .total-value { font-size: 1.85rem; }
+
+  .dropdown.open .dropdown-content { max-height: 220px; }
+}
