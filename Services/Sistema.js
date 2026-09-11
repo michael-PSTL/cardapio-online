@@ -1,91 +1,198 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ─── ELEMENTOS ───────────────────────────────────────────────
-  const hamburger        = document.getElementById("hamburger");
-  const nav2             = document.getElementById("nav2");
-  const form             = document.getElementById("pedido-form");
-  const overlay          = document.getElementById("formulario-overlay");
-  const dropdown         = document.getElementById("dropdown-bebida");
-  const dropdownToggle   = document.getElementById("dropdown-toggle");
-  const bebidaSelected   = document.getElementById("bebida-selected");
-  const enderecoContainer = document.getElementById("endereco-container");
-  const totalValor       = document.getElementById("total-valor");
-  const totalBreakdown   = document.getElementById("total-breakdown");
-  const btnCancelar      = document.getElementById("btn-cancelar");
+  // ─── DADOS DO CARDÁPIO ───────────────────────────────────────
+  const cardapioData = [
+    { id: "assado-panela",   nome: "Assado de panela",   preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "peixe-frito",     nome: "Peixe Frito",        preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "carne-porco",     nome: "Carne de porco",     preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "cozidao",         nome: "Cozidão",            preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "frango-assado",   nome: "Frango assado",      preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "strogonoff",      nome: "Strogonoff",         preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "empanado-frango", nome: "Empanado de frango", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+  ];
 
-  // ─── ESTADO ──────────────────────────────────────────────────
-  let precos = { marmita: 0, bebida: 0, frete: 0 };
+  // ─── DADOS DE AVALIAÇÕES ─────────────────────────────────────
+  const avaliacoesData = [
+    { nome: "Marcos Almeida",   estrelas: 5, data: "Há 2 dias",    comentario: "Comida excelente, chega bem quentinha e no horário. O cozidão é maravilhoso!" },
+    { nome: "Juliana Ferreira", estrelas: 5, data: "Há 1 semana",  comentario: "Melhor marmita da região, sabor caseiro de verdade. Já virou rotina aqui em casa." },
+    { nome: "Pedro Costa",      estrelas: 4, data: "Há 2 semanas", comentario: "Muito bom, só acho que a porção de arroz podia ser um pouco maior. De resto, nota 10." },
+    { nome: "Ana Beatriz",      estrelas: 5, data: "Há 3 semanas", comentario: "Atendimento rápido pelo WhatsApp e entrega no prazo certinho. Recomendo demais!" },
+    { nome: "Rafael Souza",     estrelas: 5, data: "Há 1 mês",     comentario: "O frango assado é surreal, tempero na medida certa. Virei cliente fiel." },
+    { nome: "Camila Rocha",     estrelas: 4, data: "Há 1 mês",     comentario: "Peixe frito muito saboroso e crocante. Só peço para chegar um pouco mais rápido." },
+  ];
+
+  // ─── ÍCONE DE ESTRELA ────────────────────────────────────────
+  function svgEstrela(preenchida) {
+    return `
+      <svg viewBox="0 0 20 20" fill="${preenchida ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.5" class="${preenchida ? "" : "vazia"}">
+        <path d="M10 1.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2-5.4 3.2 1.3-6L1.3 7.7l6.1-.6L10 1.5z" />
+      </svg>`;
+  }
+
+  // ─── RENDER: CARDÁPIO ────────────────────────────────────────
+  function renderCardapio() {
+    const container = document.getElementById("cardapio-itens");
+    if (!container) return;
+
+    container.innerHTML = cardapioData.map((item) => `
+      <div class="marmita" data-id="${item.id}">
+        <div class="img-wrapper">
+          <img src="${item.img}" alt="${item.nome}" class="IMG-marmita" />
+          <div class="img-overlay"></div>
+        </div>
+        <div class="marmita-content">
+          <h4 class="cardapio-nome">${item.nome}</h4>
+          <div class="opcoes-compra">
+            <span class="Preço">R$ ${item.preco.toFixed(2).replace(".", ",")}</span>
+            <button class="Comprar" data-id="${item.id}">Adicionar</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    container.querySelectorAll(".Comprar").forEach((button) => {
+      button.addEventListener("click", () => {
+        const item = cardapioData.find((p) => p.id === button.dataset.id);
+        if (!item) return;
+
+        window.Carrinho.adicionarItem(item);
+
+        button.textContent = "Adicionado ✓";
+        button.classList.add("added");
+        setTimeout(() => {
+          button.textContent = "Adicionar";
+          button.classList.remove("added");
+        }, 1200);
+      });
+    });
+  }
+
+  // ─── RENDER: AVALIAÇÕES ──────────────────────────────────────
+  function renderAvaliacoes() {
+    const container = document.getElementById("avaliacoes-itens");
+    const resumo = document.getElementById("avaliacoes-resumo");
+    if (!container || !resumo) return;
+
+    const total = avaliacoesData.length;
+    const media = avaliacoesData.reduce((acc, a) => acc + a.estrelas, 0) / total;
+
+    resumo.innerHTML = `
+      <span class="avaliacoes-media">${media.toFixed(1)}</span>
+      <div class="avaliacoes-estrelas-media">
+        ${[1, 2, 3, 4, 5].map((n) => svgEstrela(n <= Math.round(media))).join("")}
+      </div>
+      <span class="avaliacoes-contagem">baseado em ${total} avaliações</span>
+    `;
+
+    container.innerHTML = avaliacoesData.map((dep) => `
+      <div class="depoimento">
+        <div class="depoimento-estrelas">
+          ${[1, 2, 3, 4, 5].map((n) => svgEstrela(n <= dep.estrelas)).join("")}
+        </div>
+        <p class="depoimento-texto">"${dep.comentario}"</p>
+        <div class="depoimento-rodape">
+          <div class="depoimento-autor">
+            <div class="depoimento-avatar">${dep.nome.charAt(0)}</div>
+            <span class="depoimento-nome">${dep.nome}</span>
+          </div>
+          <span class="depoimento-data">${dep.data}</span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  renderCardapio();
+  renderAvaliacoes();
+
+  const anoAtual = document.getElementById("ano-atual");
+  if (anoAtual) anoAtual.textContent = new Date().getFullYear();
+
+  // ─── ELEMENTOS GERAIS ────────────────────────────────────────
+  const hamburger          = document.getElementById("hamburger");
+  const nav2               = document.getElementById("nav2");
+  const form               = document.getElementById("pedido-form");
+  const overlay            = document.getElementById("formulario-overlay");
+  const dropdown           = document.getElementById("dropdown-bebida");
+  const dropdownToggle     = document.getElementById("dropdown-toggle");
+  const bebidaSelected     = document.getElementById("bebida-selected");
+  const enderecoContainer  = document.getElementById("endereco-container");
+  const totalValor         = document.getElementById("total-valor");
+  const totalBreakdown     = document.getElementById("total-breakdown");
+  const btnCancelar        = document.getElementById("btn-cancelar");
+  const resumoCarrinhoForm = document.getElementById("resumo-carrinho-form");
+
+  // ─── ESTADO (bebida/frete são "extras" do pedido, fora do carrinho) ───
+  let precos = { bebida: 0, frete: 0 };
+  let bebidaNome = "Sem bebida";
 
   // ─── MENU HAMBURGUER ─────────────────────────────────────────
-  hamburger.addEventListener("click", () => {
-    nav2.classList.toggle("active");
-  });
-
+  hamburger.addEventListener("click", () => nav2.classList.toggle("active"));
   document.querySelectorAll("#nav2 a").forEach((link) => {
     link.addEventListener("click", () => nav2.classList.remove("active"));
   });
 
-  // ─── ABRIR FORMULÁRIO ────────────────────────────────────────
-  document.querySelectorAll(".Comprar").forEach((button) => {
-    button.addEventListener("click", () => {
-      const nome = button.closest(".marmita").querySelector(".cardapio-nome").innerText;
-      document.querySelector(".marmita-tittle").innerText = nome;
-      overlay.style.display = "block";
-    });
-  });
+  // ─── ABRIR FORMULÁRIO (chamado pelo Carrinho.js ao finalizar) ─
+  function abrirFormulario() {
+    if (window.Carrinho.getItens().length === 0) return;
+    renderResumoCarrinhoForm();
+    calcularTotal();
+    overlay.style.display = "block";
+  }
+  window.abrirFormularioPedido = abrirFormulario;
+
+  function renderResumoCarrinhoForm() {
+    if (!resumoCarrinhoForm) return;
+    const itens = window.Carrinho.getItens();
+    resumoCarrinhoForm.innerHTML = itens.map((item) => `
+      <div class="resumo-item">
+        <span><span class="resumo-qtd">${item.quantidade}x</span>${item.nome}</span>
+        <span>R$ ${(item.preco * item.quantidade).toFixed(2).replace(".", ",")}</span>
+      </div>
+    `).join("");
+  }
 
   // ─── FECHAR FORMULÁRIO ───────────────────────────────────────
   function fecharFormulario() {
     overlay.style.display = "none";
     form.reset();
-    precos = { marmita: 0, bebida: 0, frete: 0 };
+    precos = { bebida: 0, frete: 0 };
+    bebidaNome = "Sem bebida";
     bebidaSelected.textContent = "Selecione uma bebida";
     bebidaSelected.classList.remove("selected-text");
     enderecoContainer.classList.remove("visible");
     dropdown.classList.remove("open");
-    calcularTotal();
   }
 
   btnCancelar.addEventListener("click", fecharFormulario);
-
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) fecharFormulario();
-  });
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) fecharFormulario(); });
 
   // ─── DROPDOWN BEBIDA ─────────────────────────────────────────
   dropdownToggle.addEventListener("click", (e) => {
     e.stopPropagation();
     dropdown.classList.toggle("open");
   });
-
   document.addEventListener("click", (e) => {
     if (!dropdown.contains(e.target)) dropdown.classList.remove("open");
   });
 
-  // ─── CÁLCULO DO TOTAL ────────────────────────────────────────
+  // ─── CÁLCULO DO TOTAL (carrinho + bebida + frete) ────────────
   function calcularTotal() {
-    const total = precos.marmita + precos.bebida + precos.frete;
+    const subtotalCarrinho = window.Carrinho.getSubtotal();
+    const total = subtotalCarrinho + precos.bebida + precos.frete;
     totalValor.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
 
     const items = [];
-    if (precos.marmita > 0) items.push(`Marmita: R$ ${precos.marmita.toFixed(2).replace(".", ",")}`);
-    if (precos.bebida  > 0) items.push(`Bebida: R$ ${precos.bebida.toFixed(2).replace(".", ",")}`);
-    if (precos.frete   > 0) items.push(`Frete: R$ ${precos.frete.toFixed(2).replace(".", ",")}`);
-
+    if (subtotalCarrinho > 0) items.push(`Itens: R$ ${subtotalCarrinho.toFixed(2).replace(".", ",")}`);
+    if (precos.bebida > 0)    items.push(`Bebida: R$ ${precos.bebida.toFixed(2).replace(".", ",")}`);
+    if (precos.frete > 0)     items.push(`Frete: R$ ${precos.frete.toFixed(2).replace(".", ",")}`);
     totalBreakdown.textContent = items.join(" · ");
   }
 
   // ─── LISTENERS DE PREÇO ──────────────────────────────────────
-  document.querySelectorAll('input[name="marmita"]').forEach((radio) => {
-    radio.addEventListener("change", function () {
-      precos.marmita = parseFloat(this.dataset.price) || 0;
-      calcularTotal();
-    });
-  });
-
   document.querySelectorAll('input[name="bebida"]').forEach((radio) => {
     radio.addEventListener("change", function () {
       precos.bebida = parseFloat(this.dataset.price) || 0;
+      bebidaNome = this.dataset.name;
       bebidaSelected.textContent = this.dataset.name;
       bebidaSelected.classList.add("selected-text");
       dropdown.classList.remove("open");
@@ -106,31 +213,40 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const dados = Object.fromEntries(new FormData(form).entries());
-    dados.total = precos.marmita + precos.bebida + precos.frete;
+    const itensCarrinho = window.Carrinho.getItens();
+    const subtotalCarrinho = window.Carrinho.getSubtotal();
+    const total = subtotalCarrinho + precos.bebida + precos.frete;
+
+    const itensTexto = itensCarrinho
+      .map((item) => `   ${item.quantidade}x ${item.nome} — R$ ${(item.preco * item.quantidade).toFixed(2).replace(".", ",")}`)
+      .join("\n");
 
     let enderecoTexto = "";
     if (dados.recebimento === "entrega") {
       enderecoTexto =
         `\n📍 Endereço:\n` +
-        `   Bairro: ${dados.bairro  || "Não informado"}\n` +
-        `   Quadra: ${dados.quadra  || "Não informado"}\n` +
-        `   Rua: ${dados.rua        || "Não informado"}\n` +
-        `   Número: ${dados.numero  || "Não informado"}`;
+        `   Bairro: ${dados.bairro || "Não informado"}\n` +
+        `   Quadra: ${dados.quadra || "Não informado"}\n` +
+        `   Rua: ${dados.rua || "Não informado"}\n` +
+        `   Número: ${dados.numero || "Não informado"}`;
     }
 
     const mensagem =
       `Olá, gostaria de fazer um pedido!\n\n` +
-      `👤 Nome: ${dados.nome || "Não informado"}\n` +
-      `🍱 Marmita: ${dados.marmita}\n` +
-      `🥤 Bebida: ${dados.bebida}\n` +
+      `👤 Nome: ${dados.nome || "Não informado"}\n\n` +
+      `🍱 Itens:\n${itensTexto}\n\n` +
+      `🥤 Bebida: ${bebidaNome}\n` +
       `📦 Recebimento: ${dados.recebimento}` +
       `${enderecoTexto}\n\n` +
       `📝 Observações: ${dados.observacoes || "Nenhuma"}\n` +
-      `💰 Total: R$ ${dados.total.toFixed(2).replace(".", ",")}`;
+      `💰 Total: R$ ${total.toFixed(2).replace(".", ",")}`;
 
     const number = "5598984975025";
     const url = `https://api.whatsapp.com/send?phone=${number}&text=${encodeURIComponent(mensagem)}`;
     window.open(url, "_blank");
+
+    window.Carrinho.limparCarrinho();
+    fecharFormulario();
   });
 
 });

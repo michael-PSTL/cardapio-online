@@ -8,11 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    
+
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/cardapio.css" />
+    <link rel="stylesheet" href="/assets/css/avaliacoes.css" />
     <link rel="stylesheet" href="/assets/css/informações.css" />
     <link rel="stylesheet" href="/assets/css/form.css" />
+    <link rel="stylesheet" href="/assets/css/carrinho.css" />
   </head>
   <body>
 
@@ -22,19 +24,32 @@
         <nav class="navegação">
           <ul>
             <li><a href="#Cardapio" class="nav">Cardápio</a></li>
+            <li><a href="#Avaliacoes" class="nav">Avaliações</a></li>
             <li><a href="#Localizacao" class="nav">Localização</a></li>
             <li><a href="#Contato" class="nav">Contato</a></li>
           </ul>
         </nav>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+
+        <div class="menu-actions">
+          <button class="cart-btn" id="cart-btn" aria-label="Abrir carrinho">
+            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge" id="cart-badge">0</span>
+          </button>
+          <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
 
       <nav class="nav2" id="nav2">
         <a href="#Cardapio" class="nav2N">Cardápio</a>
+        <a href="#Avaliacoes" class="nav2N">Avaliações</a>
         <a href="#Localizacao" class="nav2N">Localização</a>
         <a href="#Contato" class="nav2N">Contato</a>
       </nav>
@@ -46,108 +61,25 @@
         <div class="section-header">
           <h2 class="cardapio-TITULO">Nosso <i>Cardápio</i></h2>
         </div>
-        <div class="cardapio-ITENS">
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Assado de panela" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Assado de panela</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Peixe Frito" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Peixe Frito</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Carne de porco" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Carne de porco</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Cozidão" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Cozidão</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Frango assado" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Frango assado</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Strogonoff" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Strogonoff</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="marmita">
-            <div class="img-wrapper">
-              <img src="/assets/img/imagem-restaurante.jfif" alt="Empanado de frango" class="IMG-marmita" />
-              <div class="img-overlay"></div>
-            </div>
-            <div class="marmita-content">
-              <h4 class="cardapio-nome">Empanado de frango</h4>
-              <div class="opcoes-compra">
-                <span class="Preço">R$ 99,99</span>
-                <button class="Comprar">Pedir</button>
-              </div>
-            </div>
-          </div>
-
+        <div class="cardapio-ITENS" id="cardapio-itens">
+          <!-- Itens renderizados dinamicamente pelo Sistema.js -->
         </div>
       </main>
+    </section>
+
+    <!-- ─── AVALIAÇÕES ─── -->
+    <section class="AVALIACOES" id="Avaliacoes">
+      <div class="avaliacoes-BOX">
+        <div class="section-header">
+          <h2 class="avaliacoes-TITULO">O que dizem <i>nossos clientes</i></h2>
+        </div>
+        <div class="avaliacoes-resumo" id="avaliacoes-resumo">
+          <!-- Resumo (média + total) renderizado pelo Sistema.js -->
+        </div>
+        <div class="avaliacoes-ITENS" id="avaliacoes-itens">
+          <!-- Depoimentos renderizados dinamicamente pelo Sistema.js -->
+        </div>
+      </div>
     </section>
 
     <!-- ─── LOCALIZAÇÃO ─── -->
@@ -191,37 +123,104 @@
       </div>
     </section>
 
-    <!-- ─── CONTATO ─── -->
+    <!-- ─── CONTATO / FOOTER ─── -->
     <footer class="CONTATO" id="Contato">
-      <h2 class="contato-TITULO">Fale <i>Conosco</i></h2>
-      <div class="contato-BOX">
-        <a href="#" class="app-image">
-          <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
-            <use href="/assets/SVGs/mdi--instagram.svg#instagram"></use>
-          </svg>
-          <i>@mik.devcode</i>
-        </a>
-        <a href="#" class="app-image">
-          <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
-            <use href="/assets/SVGs/ic--baseline-whatsapp.svg#whatsapp"></use>
-          </svg>
-          <i>+55 (98) 98497-5025</i>
-        </a>
-        <a href="#" class="app-image">
-          <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
-            <use href="/assets/SVGs/ic--baseline-email.svg#email"></use>
-          </svg>
-          <i>michael.s11.soares@gmail.com</i>
-        </a>
+      <div class="contato-container">
+        <div class="contato-grid">
+
+          <div class="contato-col contato-sobre">
+            <h3 class="contato-logo">Restaurante</h3>
+            <p class="contato-desc">Comida caseira feita com carinho todos os dias, para você e sua família.</p>
+          </div>
+
+          <div class="contato-col">
+            <h4 class="contato-col-titulo">Links Rápidos</h4>
+            <ul class="contato-links">
+              <li><a href="#Cardapio">Cardápio</a></li>
+              <li><a href="#Avaliacoes">Avaliações</a></li>
+              <li><a href="#Localizacao">Localização</a></li>
+            </ul>
+          </div>
+
+          <div class="contato-col">
+            <h4 class="contato-col-titulo">Horário de Funcionamento</h4>
+            <ul class="contato-horario">
+              <li><span>Seg – Sex</span><span>11h – 15h</span></li>
+              <li><span>Sábado</span><span>11h – 16h</span></li>
+              <li><span>Domingo</span><span>Fechado</span></li>
+            </ul>
+          </div>
+
+          <div class="contato-col">
+            <h4 class="contato-col-titulo">Fale Conosco</h4>
+            <div class="contato-BOX">
+              <a href="#" class="app-image">
+                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
+                  <use href="/assets/SVGs/mdi--instagram.svg#instagram"></use>
+                </svg>
+                <i>@mik.devcode</i>
+              </a>
+              <a href="#" class="app-image">
+                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
+                  <use href="/assets/SVGs/ic--baseline-whatsapp.svg#whatsapp"></use>
+                </svg>
+                <i>+55 (98) 98497-5025</i>
+              </a>
+              <a href="#" class="app-image">
+                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
+                  <use href="/assets/SVGs/ic--baseline-email.svg#email"></use>
+                </svg>
+                <i>michael.s11.soares@gmail.com</i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="contato-bottom">
+          <p>&copy; <span id="ano-atual"></span> Restaurante. Todos os direitos reservados.</p>
+          <p class="contato-credito">Feito por <i>@mik.devcode</i></p>
+        </div>
       </div>
     </footer>
+
+    <!-- ─── CARRINHO (DRAWER) ─── -->
+    <div class="carrinho-overlay" id="carrinho-overlay">
+      <aside class="carrinho-drawer" id="carrinho-drawer">
+        <div class="carrinho-header">
+          <h3>Seu Carrinho</h3>
+          <button class="carrinho-fechar" id="carrinho-fechar" aria-label="Fechar carrinho">&times;</button>
+        </div>
+
+        <div class="carrinho-lista" id="carrinho-lista"></div>
+
+        <div class="carrinho-vazio" id="carrinho-vazio">
+          <p>Seu carrinho está vazio</p>
+          <span>Adicione itens do nosso cardápio!</span>
+        </div>
+
+        <div class="carrinho-footer">
+          <div class="carrinho-total">
+            <span>Subtotal</span>
+            <strong id="carrinho-subtotal">R$ 0,00</strong>
+          </div>
+          <button class="btn btn-submit" id="carrinho-finalizar">Finalizar Pedido</button>
+        </div>
+      </aside>
+    </div>
 
     <!-- ─── FORMULÁRIO DE PEDIDO ─── -->
     <div class="formulario" id="formulario-overlay">
       <form class="pedido-form" id="pedido-form">
         <div class="form-header">
-          <div class="marmita-tittle">Pedido de Marmita</div>
-          <p>Escolha suas opções abaixo</p>
+          <div class="marmita-tittle">Finalizar Pedido</div>
+          <p>Confira os itens e escolha as opções abaixo</p>
+        </div>
+
+        <!-- Resumo do carrinho -->
+        <div class="section">
+          <div class="section-tittle">Seus Itens</div>
+          <div class="resumo-carrinho" id="resumo-carrinho-form"></div>
         </div>
 
         <!-- Nome do Cliente -->
@@ -235,27 +234,6 @@
             id="input-nome"
             required
           />
-        </div>
-
-        <!-- Tipo de Marmita -->
-        <div class="section">
-          <div class="section-tittle">Tipo de Marmita</div>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" name="marmita" id="marmita-simples" value="simples" data-price="20" required />
-              <label for="marmita-simples" class="radio-label">
-                <span class="name">Simples</span>
-                <span class="price">R$ 20,00</span>
-              </label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" name="marmita" id="marmita-completa" value="completa" data-price="25" />
-              <label for="marmita-completa" class="radio-label">
-                <span class="name">Completa</span>
-                <span class="price">R$ 25,00</span>
-              </label>
-            </div>
-          </div>
         </div>
 
         <!-- Bebida -->
@@ -341,12 +319,13 @@
 
         <!-- Botões -->
         <div class="form-footer">
-          <button type="button" class="btn btn-cancel" id="btn-cancelar">Cancelar</button>
-          <button type="submit" class="btn btn-submit">Finalizar Pedido</button>
+          <button type="button" class="btn btn-cancel" id="btn-cancelar">Voltar</button>
+          <button type="submit" class="btn btn-submit">Enviar Pedido</button>
         </div>
       </form>
     </div>
 
+    <script src="/Services/Carrinho.js"></script>
     <script src="/Services/Sistema.js"></script>
     <script src="/Services/API.js"></script>
   </body>
