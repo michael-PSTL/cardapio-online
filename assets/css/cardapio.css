@@ -115,10 +115,9 @@
 
 .cardapio-ITENS::-webkit-scrollbar { display: none; }
 
-.cardapio-ITENS.arrastando {
-  cursor: grabbing;
+.cardapio-ITENS.arrastando,
+.cardapio-ITENS.animando {
   scroll-snap-type: none;
-  user-select: none;
 }
 
 /* ─── CARD ─── */

@@ -82,35 +82,99 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ─── CARROSSEL: ARRASTAR (mouse + toque) ──────────────────────
+     // ─── CARROSSEL: ARRASTAR (mouse + toque) COM SUAVIZAÇÃO ──────
   function habilitarArraste(el) {
     let isDown = false;
+    let moveu = false;
     let startX = 0;
     let scrollStart = 0;
-    let moveu = false;
+    let alvoScroll = el.scrollLeft;
+    let ultimaX = 0;
+    let ultimoTempo = 0;
+    let velocidade = 0;
+    let rafId = null;
+
+    function pararAnimacao() {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    function animar() {
+      const atual = el.scrollLeft;
+      const max = el.scrollWidth - el.clientWidth;
+      alvoScroll = Math.max(0, Math.min(alvoScroll, max));
+      const diff = alvoScroll - atual;
+
+      if (Math.abs(diff) > 0.5) {
+        el.scrollLeft = atual + diff * 0.22; // suavização (lerp)
+        rafId = requestAnimationFrame(animar);
+      } else {
+        el.scrollLeft = alvoScroll;
+        rafId = null;
+      }
+    }
+
+    function pedirFrame() {
+      if (!rafId) rafId = requestAnimationFrame(animar);
+    }
 
     function inicio(pageX) {
       isDown = true;
       moveu = false;
+      velocidade = 0;
       el.classList.add("arrastando");
+      pararAnimacao();
       startX = pageX - el.offsetLeft;
       scrollStart = el.scrollLeft;
+      alvoScroll = el.scrollLeft;
+      ultimaX = pageX;
+      ultimoTempo = performance.now();
     }
 
     function mover(pageX, evt) {
       if (!isDown) return;
       const x = pageX - el.offsetLeft;
       const walk = (x - startX) * 1.2;
+
       if (Math.abs(walk) > 5) {
         moveu = true;
         if (evt && evt.cancelable) evt.preventDefault();
       }
-      el.scrollLeft = scrollStart - walk;
+
+      const agora = performance.now();
+      const dt = agora - ultimoTempo || 16;
+      velocidade = (pageX - ultimaX) / dt;
+      ultimaX = pageX;
+      ultimoTempo = agora;
+
+      alvoScroll = scrollStart - walk;
+      pedirFrame();
     }
 
     function fim() {
+      if (!isDown) return;
       isDown = false;
       el.classList.remove("arrastando");
+
+      // ─── Inércia: continua deslizando com desaceleração ───
+      let vel = velocidade * -16;
+      if (Math.abs(vel) > 1) {
+        alvoScroll = el.scrollLeft;
+        const desacelerar = () => {
+          if (Math.abs(vel) < 0.5) {
+            rafId = null;
+            return;
+          }
+          alvoScroll += vel;
+          vel *= 0.94;
+          el.scrollLeft = alvoScroll;
+          rafId = requestAnimationFrame(desacelerar);
+        };
+        pararAnimacao();
+        rafId = requestAnimationFrame(desacelerar);
+      }
     }
 
     // Mouse (desktop)
@@ -130,6 +194,32 @@ document.addEventListener("DOMContentLoaded", () => {
         e.stopPropagation();
       }
     }, true);
+
+       // ─── Controlador usado pelos botões de navegação ─────────
+    return {
+      scrollPara(delta) {
+        pararAnimacao();
+        el.classList.add("animando");
+        alvoScroll = el.scrollLeft + delta;
+
+        function passo() {
+          const atual = el.scrollLeft;
+          const max = el.scrollWidth - el.clientWidth;
+          const alvoClampado = Math.max(0, Math.min(alvoScroll, max));
+          const diff = alvoClampado - atual;
+
+          if (Math.abs(diff) > 0.5) {
+            el.scrollLeft = atual + diff * 0.22;
+            rafId = requestAnimationFrame(passo);
+          } else {
+            el.scrollLeft = alvoClampado;
+            el.classList.remove("animando");
+            rafId = null;
+          }
+        }
+        rafId = requestAnimationFrame(passo);
+      },
+    };
   }
 
   // ─── CARROSSEL: BOTÕES DE NAVEGAÇÃO ──────────────────────────
@@ -139,18 +229,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtn = document.querySelector(`.carrossel-next[data-target="${prefixo}"]`);
     if (!track) return;
 
+    const controlador = habilitarArraste(track);
     const passo = () => (track.querySelector(".marmita")?.offsetWidth || 260) + 20;
 
     prevBtn?.addEventListener("click", () => {
-      track.scrollBy({ left: -passo(), behavior: "smooth" });
+      controlador.scrollPara(-passo());
     });
 
     nextBtn?.addEventListener("click", () => {
-      track.scrollBy({ left: passo(), behavior: "smooth" });
+      controlador.scrollPara(passo());
     });
-
-    habilitarArraste(track);
   }
+
 
   // ─── RENDER: AVALIAÇÕES ──────────────────────────────────────
   function renderAvaliacoes() {

@@ -70,7 +70,7 @@ const Carrinho = (() => {
   // ─── UI ──────────────────────────────────────────────────────
   function animarBadge() {
     cartBadge.classList.remove("visible");
-    void cartBadge.offsetWidth; // reinicia a animação
+    void cartBadge.offsetWidth;
     cartBadge.classList.add("visible");
   }
 
@@ -81,7 +81,7 @@ const Carrinho = (() => {
 
   function fecharCarrinho() {
     overlay.classList.remove("active");
-    // só destrava se o formulário também não estiver aberto
+
     const formularioAberto = document.getElementById("formulario-overlay")?.style.display === "block";
     if (!formularioAberto && typeof window.destravarScrollPagina === "function") {
       window.destravarScrollPagina();
