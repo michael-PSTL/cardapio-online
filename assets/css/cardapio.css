@@ -1,4 +1,5 @@
 /* ─── CARDÁPIO ─── */
+
 .CARDAPIO {
   padding: 80px 24px 100px;
 }
@@ -40,7 +41,9 @@
   font-style: italic;
 }
 
-/* ─── CATEGORIAS DO CARDÁPIO ─── */
+
+/* ─── CATEGORIAS ─── */
+
 .cardapio-categoria {
   margin-bottom: 56px;
 }
@@ -60,7 +63,9 @@
   letter-spacing: -0.01em;
 }
 
+
 /* ─── CARROSSEL ─── */
+
 .carrossel-wrapper {
   position: relative;
   display: flex;
@@ -72,24 +77,40 @@
   flex-shrink: 0;
   width: 42px;
   height: 42px;
+
   border-radius: 50%;
   border: 1.5px solid var(--text-faint);
+
   background: var(--bg-card);
   color: var(--text);
+
   font-size: 1.5rem;
   line-height: 1;
+
   cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
+
+  transition:
+    border-color 0.25s ease,
+    color 0.25s ease,
+    background 0.25s ease,
+    transform 0.2s ease;
+
   z-index: 2;
 }
 
 .carrossel-btn:hover {
   border-color: var(--border-hover);
   color: var(--primary);
-  background: rgba(255,107,0,0.06);
+  background: rgba(255, 107, 0, 0.06);
+  transform: scale(1.05);
+}
+
+.carrossel-btn:active {
+  transform: scale(0.95);
 }
 
 .carrossel-btn:disabled {
@@ -98,81 +119,133 @@
   pointer-events: none;
 }
 
+
+/* ─── ÁREA DOS CARDS (janela que corta o conteúdo) ─── */
+
 .cardapio-ITENS {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
+  overflow: hidden;
+
   padding: 4px 4px 12px;
+
   cursor: grab;
+
   flex: 1;
   min-width: 0;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overscroll-behavior-x: contain;
+
+  /* deixa o navegador cuidar do scroll vertical da página;
+     o deslize horizontal é 100% controlado pelo JS (transform) */
+  touch-action: pan-y;
+
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.cardapio-ITENS::-webkit-scrollbar { display: none; }
-
-.cardapio-ITENS.arrastando,
-.cardapio-ITENS.animando {
-  scroll-snap-type: none;
+.cardapio-ITENS.arrastando {
+  cursor: grabbing;
 }
+
+/* .cardapio-track é o elemento que de fato se move (translate3d) */
+.cardapio-track {
+  display: flex;
+  gap: 20px;
+  will-change: transform;
+}
+
 
 /* ─── CARD ─── */
+
 .marmita {
+  position: relative;
+
+  flex: 0 0 260px;
+
   background: var(--bg-card);
+
   border: 1px solid var(--text-faint);
   border-radius: var(--radius-lg);
+
   overflow: hidden;
-  transition: var(--transition);
-  position: relative;
-  flex: 0 0 260px;
-  scroll-snap-align: start;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .marmita::after {
   content: '';
+
   position: absolute;
   inset: 0;
+
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-hover);
+
   opacity: 0;
+
   transition: opacity 0.3s ease;
+
   pointer-events: none;
 }
 
 .marmita:hover {
   transform: translateY(-5px);
-  box-shadow: var(--shadow-card), var(--shadow-glow);
+  box-shadow:
+    var(--shadow-card),
+    var(--shadow-glow);
 }
 
-.marmita:hover::after { opacity: 1; }
+.marmita:hover::after {
+  opacity: 1;
+}
+
+
+/* ─── IMAGEM ─── */
 
 .img-wrapper {
   position: relative;
-  overflow: hidden;
+
   height: 190px;
+
+  overflow: hidden;
+
   pointer-events: none;
 }
 
 .IMG-marmita {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
   display: block;
+
   transition: transform 0.6s ease;
+
   -webkit-user-drag: none;
+  user-select: none;
 }
 
-.marmita:hover .IMG-marmita { transform: scale(1.06); }
+.marmita:hover .IMG-marmita {
+  transform: scale(1.06);
+}
 
 .img-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.55) 0%,
+      transparent 55%
+    );
 }
+
+
+/* ─── CONTEÚDO ─── */
 
 .marmita-content {
   padding: 18px 18px 20px;
@@ -180,70 +253,112 @@
 
 .cardapio-nome {
   font-family: var(--font-display);
+
   font-size: 1.05rem;
   font-weight: 600;
+
   color: var(--text);
+
   margin-bottom: 16px;
+
   letter-spacing: -0.01em;
   line-height: 1.3;
 }
 
 .opcoes-compra {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+
   gap: 10px;
 }
 
 .Preço {
   font-size: 1.15rem;
   font-weight: 700;
+
   color: var(--primary);
+
   letter-spacing: -0.02em;
+
   white-space: nowrap;
 }
 
-/* ─── BOTÃO ADICIONAR (redesenhado) ─── */
+
+/* ─── BOTÃO ADICIONAR ─── */
+
 .Comprar {
   display: inline-flex;
+
   align-items: center;
+  justify-content: center;
+
   gap: 6px;
+
   padding: 9px 16px 9px 12px;
+
   background: var(--primary);
+
   border: none;
+
   color: #fff;
+
+  font-family: var(--font-body);
+
   font-size: 0.74rem;
   font-weight: 700;
-  font-family: var(--font-body);
+
   border-radius: 999px;
+
   cursor: pointer;
+
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  transition: var(--transition);
+
   white-space: nowrap;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  transition:
+    background 0.25s ease,
+    transform 0.2s ease,
+    box-shadow 0.25s ease;
 }
 
 .Comprar::before {
   content: '+';
+
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
+
   width: 16px;
   height: 16px;
+
   border-radius: 50%;
-  background: rgba(255,255,255,0.25);
+
+  background: rgba(255, 255, 255, 0.25);
+
   font-size: 0.85rem;
   font-weight: 900;
+
   line-height: 1;
 }
 
 .Comprar:hover {
   background: var(--primary-light);
+
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 107, 0, 0.35);
+
+  box-shadow:
+    0 6px 20px rgba(255, 107, 0, 0.35);
 }
 
-.Comprar:active { transform: translateY(0); }
+.Comprar:active {
+  transform: translateY(0);
+}
 
 .Comprar.added {
   background: #2e8b57;
@@ -254,15 +369,18 @@
   background: transparent;
 }
 
-/* ─── RESPONSIVE ─── */
+
+/* ─── MOBILE ─── */
+
 @media (max-width: 768px) {
+
   .CARDAPIO {
     padding: 60px 16px 80px;
   }
 
   .section-header {
-    margin-bottom: 36px;
     gap: 14px;
+    margin-bottom: 36px;
   }
 
   .section-header::before {
@@ -277,6 +395,14 @@
     display: none;
   }
 
+  .cardapio-ITENS {
+    padding: 4px 4px 16px;
+  }
+
+  .cardapio-track {
+    gap: 16px;
+  }
+
   .marmita {
     flex: 0 0 230px;
   }
@@ -286,9 +412,22 @@
   }
 }
 
+
+/* ─── CELULAR PEQUENO ─── */
+
 @media (max-width: 480px) {
+
   .CARDAPIO {
     padding: 48px 12px 64px;
+  }
+
+  .cardapio-ITENS {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .cardapio-track {
+    gap: 14px;
   }
 
   .marmita {
@@ -315,5 +454,24 @@
   .Comprar {
     padding: 8px 12px 8px 10px;
     font-size: 0.68rem;
+  }
+
+  .Comprar::before {
+    width: 15px;
+    height: 15px;
+    font-size: 0.78rem;
+  }
+}
+
+
+/* ─── REDUÇÃO DE MOVIMENTO ─── */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .marmita,
+  .IMG-marmita,
+  .Comprar,
+  .carrossel-btn {
+    transition: none;
   }
 }
