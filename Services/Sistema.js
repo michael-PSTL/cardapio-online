@@ -82,36 +82,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ─── CARROSSEL: ARRASTAR COM MOUSE ────────────────────────────
+  // ─── CARROSSEL: ARRASTAR (mouse + toque) ──────────────────────
   function habilitarArraste(el) {
     let isDown = false;
     let startX = 0;
     let scrollStart = 0;
     let moveu = false;
 
-    el.addEventListener("mousedown", (e) => {
+    function inicio(pageX) {
       isDown = true;
       moveu = false;
       el.classList.add("arrastando");
-      startX = e.pageX - el.offsetLeft;
+      startX = pageX - el.offsetLeft;
       scrollStart = el.scrollLeft;
-    });
+    }
 
-    ["mouseleave", "mouseup"].forEach((evt) => {
-      el.addEventListener(evt, () => {
-        isDown = false;
-        el.classList.remove("arrastando");
-      });
-    });
-
-    el.addEventListener("mousemove", (e) => {
+    function mover(pageX, evt) {
       if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - el.offsetLeft;
+      const x = pageX - el.offsetLeft;
       const walk = (x - startX) * 1.2;
-      if (Math.abs(walk) > 5) moveu = true;
+      if (Math.abs(walk) > 5) {
+        moveu = true;
+        if (evt && evt.cancelable) evt.preventDefault();
+      }
       el.scrollLeft = scrollStart - walk;
-    });
+    }
+
+    function fim() {
+      isDown = false;
+      el.classList.remove("arrastando");
+    }
+
+    // Mouse (desktop)
+    el.addEventListener("mousedown", (e) => inicio(e.pageX));
+    el.addEventListener("mousemove", (e) => mover(e.pageX, e));
+    ["mouseleave", "mouseup"].forEach((evt) => el.addEventListener(evt, fim));
+
+    // Toque (celular/tablet)
+    el.addEventListener("touchstart", (e) => inicio(e.touches[0].pageX), { passive: true });
+    el.addEventListener("touchmove", (e) => mover(e.touches[0].pageX, e), { passive: false });
+    ["touchend", "touchcancel"].forEach((evt) => el.addEventListener(evt, fim));
 
     // Evita que o clique "arrastado" acione o botão Adicionar sem querer
     el.addEventListener("click", (e) => {
@@ -188,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const anoAtual = document.getElementById("ano-atual");
   if (anoAtual) anoAtual.textContent = new Date().getFullYear();
 
-  // ─── TRAVAR / DESTRAVAR SCROLL DA PÁGINA ──────────────────────
+  // ─── TRAVAR / DESTRAVAR SCROLL DA PÁGINA (overlays) ──────────
   function travarScroll() { document.body.classList.add("scroll-travado"); }
   function destravarScroll() { document.body.classList.remove("scroll-travado"); }
   window.travarScrollPagina = travarScroll;
@@ -199,18 +209,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const nav2               = document.getElementById("nav2");
   const form               = document.getElementById("pedido-form");
   const overlay            = document.getElementById("formulario-overlay");
-  const dropdown           = document.getElementById("dropdown-bebida");
-  const dropdownToggle     = document.getElementById("dropdown-toggle");
-  const bebidaSelected     = document.getElementById("bebida-selected");
   const enderecoContainer  = document.getElementById("endereco-container");
   const totalValor         = document.getElementById("total-valor");
   const totalBreakdown     = document.getElementById("total-breakdown");
   const btnCancelar        = document.getElementById("btn-cancelar");
   const resumoCarrinhoForm = document.getElementById("resumo-carrinho-form");
 
-  // ─── ESTADO (bebida/frete são "extras" do pedido, fora do carrinho) ───
-  let precos = { bebida: 0, frete: 0 };
-  let bebidaNome = "Sem bebida";
+  // ─── ESTADO (frete é o único "extra" fora do carrinho) ───────
+  let precos = { frete: 0 };
 
   // ─── MENU HAMBURGUER ─────────────────────────────────────────
   hamburger.addEventListener("click", () => nav2.classList.toggle("active"));
@@ -243,12 +249,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function fecharFormulario() {
     overlay.style.display = "none";
     form.reset();
-    precos = { bebida: 0, frete: 0 };
-    bebidaNome = "Sem bebida";
-    bebidaSelected.textContent = "Selecione uma bebida";
-    bebidaSelected.classList.remove("selected-text");
+    precos = { frete: 0 };
     enderecoContainer.classList.remove("visible");
-    dropdown.classList.remove("open");
 
     // só destrava se o carrinho também não estiver aberto
     const carrinhoAberto = document.getElementById("carrinho-overlay")?.classList.contains("active");
@@ -258,40 +260,19 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCancelar.addEventListener("click", fecharFormulario);
   overlay.addEventListener("click", (e) => { if (e.target === overlay) fecharFormulario(); });
 
-  // ─── DROPDOWN BEBIDA ─────────────────────────────────────────
-  dropdownToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdown.classList.toggle("open");
-  });
-  document.addEventListener("click", (e) => {
-    if (!dropdown.contains(e.target)) dropdown.classList.remove("open");
-  });
-
-  // ─── CÁLCULO DO TOTAL (carrinho + bebida + frete) ────────────
+  // ─── CÁLCULO DO TOTAL (carrinho + frete) ─────────────────────
   function calcularTotal() {
     const subtotalCarrinho = window.Carrinho.getSubtotal();
-    const total = subtotalCarrinho + precos.bebida + precos.frete;
+    const total = subtotalCarrinho + precos.frete;
     totalValor.textContent = `R$ ${total.toFixed(2).replace(".", ",")}`;
 
     const items = [];
     if (subtotalCarrinho > 0) items.push(`Itens: R$ ${subtotalCarrinho.toFixed(2).replace(".", ",")}`);
-    if (precos.bebida > 0)    items.push(`Bebida: R$ ${precos.bebida.toFixed(2).replace(".", ",")}`);
     if (precos.frete > 0)     items.push(`Frete: R$ ${precos.frete.toFixed(2).replace(".", ",")}`);
     totalBreakdown.textContent = items.join(" · ");
   }
 
   // ─── LISTENERS DE PREÇO ──────────────────────────────────────
-  document.querySelectorAll('input[name="bebida"]').forEach((radio) => {
-    radio.addEventListener("change", function () {
-      precos.bebida = parseFloat(this.dataset.price) || 0;
-      bebidaNome = this.dataset.name;
-      bebidaSelected.textContent = this.dataset.name;
-      bebidaSelected.classList.add("selected-text");
-      dropdown.classList.remove("open");
-      calcularTotal();
-    });
-  });
-
   document.querySelectorAll('input[name="recebimento"]').forEach((radio) => {
     radio.addEventListener("change", function () {
       precos.frete = parseFloat(this.dataset.frete) || 0;
@@ -307,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dados = Object.fromEntries(new FormData(form).entries());
     const itensCarrinho = window.Carrinho.getItens();
     const subtotalCarrinho = window.Carrinho.getSubtotal();
-    const total = subtotalCarrinho + precos.bebida + precos.frete;
+    const total = subtotalCarrinho + precos.frete;
 
     const itensTexto = itensCarrinho
       .map((item) => `   ${item.quantidade}x ${item.nome} — R$ ${(item.preco * item.quantidade).toFixed(2).replace(".", ",")}`)
@@ -327,7 +308,6 @@ document.addEventListener("DOMContentLoaded", () => {
       `Olá, gostaria de fazer um pedido!\n\n` +
       `👤 Nome: ${dados.nome || "Não informado"}\n\n` +
       `🍱 Itens:\n${itensTexto}\n\n` +
-      `🥤 Bebida: ${bebidaNome}\n` +
       `📦 Recebimento: ${dados.recebimento}` +
       `${enderecoTexto}\n\n` +
       `📝 Observações: ${dados.observacoes || "Nenhuma"}\n` +
