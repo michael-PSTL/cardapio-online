@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // ─── DADOS DO CARDÁPIO ───────────────────────────────────────
-  const cardapioData = [
+  const marmitasData = [
     { id: "assado-panela",   nome: "Assado de panela",   preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
     { id: "peixe-frito",     nome: "Peixe Frito",        preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
     { id: "carne-porco",     nome: "Carne de porco",     preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
@@ -9,6 +9,21 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: "frango-assado",   nome: "Frango assado",      preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
     { id: "strogonoff",      nome: "Strogonoff",         preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
     { id: "empanado-frango", nome: "Empanado de frango", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+  ];
+
+  const bebidasData = [
+    { id: "coca-lata",    nome: "Coca-Cola Lata 350ml", preco: 6.00,  img: "/assets/img/bebida-coca-lata.jpg" },
+    { id: "coca-2l",      nome: "Coca-Cola 2L",         preco: 12.00, img: "/assets/img/bebida-coca-2l.jpg" },
+    { id: "guarana-lata", nome: "Guaraná Lata 350ml",   preco: 5.00,  img: "/assets/img/bebida-guarana-lata.jpg" },
+    { id: "guarana-2l",   nome: "Guaraná 2L",           preco: 10.00, img: "/assets/img/bebida-guarana-2l.jpg" },
+    { id: "suco-natural", nome: "Suco Natural 500ml",   preco: 8.00,  img: "/assets/img/bebida-suco.jpg" },
+  ];
+
+  const porcoesData = [
+    { id: "arroz",  nome: "Porção de Arroz",  preco: 8.00, img: "/assets/img/porcao-arroz.jpg" },
+    { id: "feijao", nome: "Porção de Feijão", preco: 8.00, img: "/assets/img/porcao-feijao.jpg" },
+    { id: "farofa", nome: "Porção de Farofa", preco: 7.00, img: "/assets/img/porcao-farofa.jpg" },
+    { id: "salada", nome: "Porção de Salada", preco: 7.00, img: "/assets/img/porcao-salada.jpg" },
   ];
 
   // ─── DADOS DE AVALIAÇÕES ─────────────────────────────────────
@@ -29,15 +44,15 @@ document.addEventListener("DOMContentLoaded", () => {
       </svg>`;
   }
 
-  // ─── RENDER: CARDÁPIO ────────────────────────────────────────
-  function renderCardapio() {
-    const container = document.getElementById("cardapio-itens");
+  // ─── RENDER: CARDÁPIO (genérico para qualquer categoria) ─────
+  function renderCarrossel(containerId, dados) {
+    const container = document.getElementById(containerId);
     if (!container) return;
 
-    container.innerHTML = cardapioData.map((item) => `
+    container.innerHTML = dados.map((item) => `
       <div class="marmita" data-id="${item.id}">
         <div class="img-wrapper">
-          <img src="${item.img}" alt="${item.nome}" class="IMG-marmita" />
+          <img src="${item.img}" alt="${item.nome}" class="IMG-marmita" draggable="false" />
           <div class="img-overlay"></div>
         </div>
         <div class="marmita-content">
@@ -52,12 +67,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.querySelectorAll(".Comprar").forEach((button) => {
       button.addEventListener("click", () => {
-        const item = cardapioData.find((p) => p.id === button.dataset.id);
+        const item = dados.find((p) => p.id === button.dataset.id);
         if (!item) return;
 
         window.Carrinho.adicionarItem(item);
 
-        button.textContent = "Adicionado ✓";
+        button.textContent = "Adicionado";
         button.classList.add("added");
         setTimeout(() => {
           button.textContent = "Adicionar";
@@ -65,6 +80,66 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1200);
       });
     });
+  }
+
+  // ─── CARROSSEL: ARRASTAR COM MOUSE ────────────────────────────
+  function habilitarArraste(el) {
+    let isDown = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let moveu = false;
+
+    el.addEventListener("mousedown", (e) => {
+      isDown = true;
+      moveu = false;
+      el.classList.add("arrastando");
+      startX = e.pageX - el.offsetLeft;
+      scrollStart = el.scrollLeft;
+    });
+
+    ["mouseleave", "mouseup"].forEach((evt) => {
+      el.addEventListener(evt, () => {
+        isDown = false;
+        el.classList.remove("arrastando");
+      });
+    });
+
+    el.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 1.2;
+      if (Math.abs(walk) > 5) moveu = true;
+      el.scrollLeft = scrollStart - walk;
+    });
+
+    // Evita que o clique "arrastado" acione o botão Adicionar sem querer
+    el.addEventListener("click", (e) => {
+      if (moveu) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+  }
+
+  // ─── CARROSSEL: BOTÕES DE NAVEGAÇÃO ──────────────────────────
+  function habilitarBotoesCarrossel(prefixo) {
+    const track = document.getElementById(`${prefixo}-itens`);
+    const prevBtn = document.querySelector(`.carrossel-prev[data-target="${prefixo}"]`);
+    const nextBtn = document.querySelector(`.carrossel-next[data-target="${prefixo}"]`);
+    if (!track) return;
+
+    const passo = () => (track.querySelector(".marmita")?.offsetWidth || 260) + 20;
+
+    prevBtn?.addEventListener("click", () => {
+      track.scrollBy({ left: -passo(), behavior: "smooth" });
+    });
+
+    nextBtn?.addEventListener("click", () => {
+      track.scrollBy({ left: passo(), behavior: "smooth" });
+    });
+
+    habilitarArraste(track);
   }
 
   // ─── RENDER: AVALIAÇÕES ──────────────────────────────────────
@@ -101,11 +176,23 @@ document.addEventListener("DOMContentLoaded", () => {
     `).join("");
   }
 
-  renderCardapio();
+  renderCarrossel("marmitas-itens", marmitasData);
+  renderCarrossel("bebidas-itens", bebidasData);
+  renderCarrossel("porcoes-itens", porcoesData);
+  habilitarBotoesCarrossel("marmitas");
+  habilitarBotoesCarrossel("bebidas");
+  habilitarBotoesCarrossel("porcoes");
+
   renderAvaliacoes();
 
   const anoAtual = document.getElementById("ano-atual");
   if (anoAtual) anoAtual.textContent = new Date().getFullYear();
+
+  // ─── TRAVAR / DESTRAVAR SCROLL DA PÁGINA ──────────────────────
+  function travarScroll() { document.body.classList.add("scroll-travado"); }
+  function destravarScroll() { document.body.classList.remove("scroll-travado"); }
+  window.travarScrollPagina = travarScroll;
+  window.destravarScrollPagina = destravarScroll;
 
   // ─── ELEMENTOS GERAIS ────────────────────────────────────────
   const hamburger          = document.getElementById("hamburger");
@@ -137,6 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderResumoCarrinhoForm();
     calcularTotal();
     overlay.style.display = "block";
+    travarScroll();
   }
   window.abrirFormularioPedido = abrirFormulario;
 
@@ -161,6 +249,10 @@ document.addEventListener("DOMContentLoaded", () => {
     bebidaSelected.classList.remove("selected-text");
     enderecoContainer.classList.remove("visible");
     dropdown.classList.remove("open");
+
+    // só destrava se o carrinho também não estiver aberto
+    const carrinhoAberto = document.getElementById("carrinho-overlay")?.classList.contains("active");
+    if (!carrinhoAberto) destravarScroll();
   }
 
   btnCancelar.addEventListener("click", fecharFormulario);

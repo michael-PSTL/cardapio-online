@@ -40,13 +40,88 @@
   font-style: italic;
 }
 
-.cardapio-ITENS {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 20px;
-  width: 100%;
+/* ─── CATEGORIAS DO CARDÁPIO ─── */
+.cardapio-categoria {
+  margin-bottom: 56px;
 }
 
+.cardapio-categoria:last-child {
+  margin-bottom: 0;
+}
+
+.categoria-titulo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 22px;
+  padding-left: 14px;
+  border-left: 3px solid var(--primary);
+  letter-spacing: -0.01em;
+}
+
+/* ─── CARROSSEL ─── */
+.carrossel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.carrossel-btn {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-faint);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 2;
+}
+
+.carrossel-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--primary);
+  background: rgba(255,107,0,0.06);
+}
+
+.carrossel-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+  pointer-events: none;
+}
+
+.cardapio-ITENS {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 4px 4px 12px;
+  cursor: grab;
+  flex: 1;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+}
+
+.cardapio-ITENS::-webkit-scrollbar { display: none; }
+
+.cardapio-ITENS.arrastando {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+/* ─── CARD ─── */
 .marmita {
   background: var(--bg-card);
   border: 1px solid var(--text-faint);
@@ -54,6 +129,8 @@
   overflow: hidden;
   transition: var(--transition);
   position: relative;
+  flex: 0 0 260px;
+  scroll-snap-align: start;
 }
 
 .marmita::after {
@@ -77,7 +154,8 @@
 .img-wrapper {
   position: relative;
   overflow: hidden;
-  height: 210px;
+  height: 190px;
+  pointer-events: none;
 }
 
 .IMG-marmita {
@@ -86,6 +164,7 @@
   object-fit: cover;
   display: block;
   transition: transform 0.6s ease;
+  -webkit-user-drag: none;
 }
 
 .marmita:hover .IMG-marmita { transform: scale(1.06); }
@@ -97,44 +176,66 @@
 }
 
 .marmita-content {
-  padding: 18px 20px 22px;
+  padding: 18px 18px 20px;
 }
 
 .cardapio-nome {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 16px;
   letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 
 .opcoes-compra {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 .Preço {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
+/* ─── BOTÃO ADICIONAR (redesenhado) ─── */
 .Comprar {
-  padding: 9px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px 9px 12px;
   background: var(--primary);
   border: none;
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
   font-family: var(--font-body);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   cursor: pointer;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: var(--transition);
+  white-space: nowrap;
+}
+
+.Comprar::before {
+  content: '+';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  font-size: 0.85rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .Comprar:hover {
@@ -144,6 +245,15 @@
 }
 
 .Comprar:active { transform: translateY(0); }
+
+.Comprar.added {
+  background: #2e8b57;
+}
+
+.Comprar.added::before {
+  content: '✓';
+  background: transparent;
+}
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
@@ -160,13 +270,20 @@
     width: 32px;
   }
 
-  .cardapio-ITENS {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .cardapio-categoria {
+    margin-bottom: 40px;
+  }
+
+  .carrossel-btn {
+    display: none;
+  }
+
+  .marmita {
+    flex: 0 0 230px;
   }
 
   .img-wrapper {
-    height: 200px;
+    height: 180px;
   }
 }
 
@@ -175,25 +292,29 @@
     padding: 48px 12px 64px;
   }
 
+  .marmita {
+    flex: 0 0 200px;
+  }
+
   .img-wrapper {
-    height: 180px;
+    height: 160px;
   }
 
   .marmita-content {
-    padding: 14px 16px 18px;
+    padding: 14px 14px 16px;
   }
 
   .cardapio-nome {
-    font-size: 1rem;
+    font-size: 0.95rem;
     margin-bottom: 12px;
   }
 
   .Preço {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .Comprar {
-    padding: 8px 14px;
-    font-size: 0.72rem;
+    padding: 8px 12px 8px 10px;
+    font-size: 0.68rem;
   }
 }

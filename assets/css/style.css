@@ -189,6 +189,12 @@ header {
   background: rgba(255,107,0,0.04);
 }
 
+/* ─── TRAVAR SCROLL COM OVERLAY ABERTO ─── */
+body.scroll-travado {
+  overflow: hidden;
+  touch-action: none;
+}
+
 /* ─── RESPONSIVE ─── */
 @media (max-width: 960px) {
   .localização-BOX {

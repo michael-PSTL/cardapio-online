@@ -74,8 +74,19 @@ const Carrinho = (() => {
     cartBadge.classList.add("visible");
   }
 
-  function abrirCarrinho() { overlay.classList.add("active"); }
-  function fecharCarrinho() { overlay.classList.remove("active"); }
+  function abrirCarrinho() {
+    overlay.classList.add("active");
+    if (typeof window.travarScrollPagina === "function") window.travarScrollPagina();
+  }
+
+  function fecharCarrinho() {
+    overlay.classList.remove("active");
+    // só destrava se o formulário também não estiver aberto
+    const formularioAberto = document.getElementById("formulario-overlay")?.style.display === "block";
+    if (!formularioAberto && typeof window.destravarScrollPagina === "function") {
+      window.destravarScrollPagina();
+    }
+  }
 
   function render() {
     const total = getTotalItens();

@@ -7,7 +7,10 @@
     <link rel="icon" href="/assets/img/restaurante.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
 
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/cardapio.css" />
@@ -17,7 +20,6 @@
     <link rel="stylesheet" href="/assets/css/carrinho.css" />
   </head>
   <body>
-
     <header class="menu">
       <div class="menu-BOX">
         <h1 class="menu-TITULO">Restaurante</h1>
@@ -32,10 +34,18 @@
 
         <div class="menu-actions">
           <button class="cart-btn" id="cart-btn" aria-label="Abrir carrinho">
-            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg
+              class="cart-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              ></path>
             </svg>
             <span class="cart-badge" id="cart-badge">0</span>
           </button>
@@ -61,8 +71,68 @@
         <div class="section-header">
           <h2 class="cardapio-TITULO">Nosso <i>Cardápio</i></h2>
         </div>
-        <div class="cardapio-ITENS" id="cardapio-itens">
-          <!-- Itens renderizados dinamicamente pelo Sistema.js -->
+
+        <div class="cardapio-categoria">
+          <h3 class="categoria-titulo">Marmitas</h3>
+          <div class="carrossel-wrapper">
+            <button
+              class="carrossel-btn carrossel-prev"
+              data-target="marmitas"
+              aria-label="Anterior"
+            >
+              &#8249;
+            </button>
+            <div class="cardapio-ITENS" id="marmitas-itens"></div>
+            <button
+              class="carrossel-btn carrossel-next"
+              data-target="marmitas"
+              aria-label="Próximo"
+            >
+              &#8250;
+            </button>
+          </div>
+        </div>
+
+        <div class="cardapio-categoria">
+          <h3 class="categoria-titulo">Bebidas</h3>
+          <div class="carrossel-wrapper">
+            <button
+              class="carrossel-btn carrossel-prev"
+              data-target="bebidas"
+              aria-label="Anterior"
+            >
+              &#8249;
+            </button>
+            <div class="cardapio-ITENS" id="bebidas-itens"></div>
+            <button
+              class="carrossel-btn carrossel-next"
+              data-target="bebidas"
+              aria-label="Próximo"
+            >
+              &#8250;
+            </button>
+          </div>
+        </div>
+
+        <div class="cardapio-categoria">
+          <h3 class="categoria-titulo">Porções Extras</h3>
+          <div class="carrossel-wrapper">
+            <button
+              class="carrossel-btn carrossel-prev"
+              data-target="porcoes"
+              aria-label="Anterior"
+            >
+              &#8249;
+            </button>
+            <div class="cardapio-ITENS" id="porcoes-itens"></div>
+            <button
+              class="carrossel-btn carrossel-next"
+              data-target="porcoes"
+              aria-label="Próximo"
+            >
+              &#8250;
+            </button>
+          </div>
         </div>
       </main>
     </section>
@@ -86,7 +156,6 @@
     <section class="LOCALIZACAO" id="Localizacao">
       <h2 class="localização-TITULO">Nossa <i>Localização</i></h2>
       <div class="localização-BOX">
-
         <div class="INFORMAÇÕES-Texto">
           <div class="info-item">
             <span class="localização-INFORMAÇÕES">Cidade</span>
@@ -112,14 +181,26 @@
 
         <div class="INFORMAÇÕES-Imagem">
           <div class="IMG">
-            <img src="/img/imagem-local.jfif" alt="Foto do local" class="ImagemLocal">
-            <img src="/img/imagem-local.jfif" alt="Foto do local" class="ImagemLocal">
+            <img
+              src="/img/imagem-local.jfif"
+              alt="Foto do local"
+              class="ImagemLocal"
+            />
+            <img
+              src="/img/imagem-local.jfif"
+              alt="Foto do local"
+              class="ImagemLocal"
+            />
           </div>
           <div class="IFRAME">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d837.9466407093498!2d-44.20318825579027!3d-2.5172147209284774!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7f6919d58c605db%3A0x90869c3fca24e61d!2sRestaurante%20Tempero%20Caseiro!5e0!3m2!1spt-BR!2sbr!4v1770133126844!5m2!1spt-BR!2sbr" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d837.9466407093498!2d-44.20318825579027!3d-2.5172147209284774!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7f6919d58c605db%3A0x90869c3fca24e61d!2sRestaurante%20Tempero%20Caseiro!5e0!3m2!1spt-BR!2sbr!4v1770133126844!5m2!1spt-BR!2sbr"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -127,10 +208,12 @@
     <footer class="CONTATO" id="Contato">
       <div class="contato-container">
         <div class="contato-grid">
-
           <div class="contato-col contato-sobre">
             <h3 class="contato-logo">Restaurante</h3>
-            <p class="contato-desc">Comida caseira feita com carinho todos os dias, para você e sua família.</p>
+            <p class="contato-desc">
+              Comida caseira feita com carinho todos os dias, para você e sua
+              família.
+            </p>
           </div>
 
           <div class="contato-col">
@@ -155,30 +238,46 @@
             <h4 class="contato-col-titulo">Fale Conosco</h4>
             <div class="contato-BOX">
               <a href="#" class="app-image">
-                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  class="image-contato"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <use href="/assets/SVGs/mdi--instagram.svg#instagram"></use>
                 </svg>
                 <i>@mik.devcode</i>
               </a>
               <a href="#" class="app-image">
-                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
-                  <use href="/assets/SVGs/ic--baseline-whatsapp.svg#whatsapp"></use>
+                <svg
+                  class="image-contato"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <use
+                    href="/assets/SVGs/ic--baseline-whatsapp.svg#whatsapp"
+                  ></use>
                 </svg>
                 <i>+55 (98) 98497-5025</i>
               </a>
               <a href="#" class="app-image">
-                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  class="image-contato"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <use href="/assets/SVGs/ic--baseline-email.svg#email"></use>
                 </svg>
                 <i>michael.s11.soares@gmail.com</i>
               </a>
             </div>
           </div>
-
         </div>
 
         <div class="contato-bottom">
-          <p>&copy; <span id="ano-atual"></span> Restaurante. Todos os direitos reservados.</p>
+          <p>
+            &copy; <span id="ano-atual"></span> Restaurante. Todos os direitos
+            reservados.
+          </p>
           <p class="contato-credito">Feito por <i>@mik.devcode</i></p>
         </div>
       </div>
@@ -189,7 +288,13 @@
       <aside class="carrinho-drawer" id="carrinho-drawer">
         <div class="carrinho-header">
           <h3>Seu Carrinho</h3>
-          <button class="carrinho-fechar" id="carrinho-fechar" aria-label="Fechar carrinho">&times;</button>
+          <button
+            class="carrinho-fechar"
+            id="carrinho-fechar"
+            aria-label="Fechar carrinho"
+          >
+            &times;
+          </button>
         </div>
 
         <div class="carrinho-lista" id="carrinho-lista"></div>
@@ -204,7 +309,9 @@
             <span>Subtotal</span>
             <strong id="carrinho-subtotal">R$ 0,00</strong>
           </div>
-          <button class="btn btn-submit" id="carrinho-finalizar">Finalizar Pedido</button>
+          <button class="btn btn-submit" id="carrinho-finalizar">
+            Finalizar Pedido
+          </button>
         </div>
       </aside>
     </div>
@@ -236,56 +343,32 @@
           />
         </div>
 
-        <!-- Bebida -->
-        <div class="section">
-          <h2 class="section-title">Bebida</h2>
-          <div class="dropdown" id="dropdown-bebida">
-            <div class="dropdown-header" id="dropdown-toggle">
-              <span id="bebida-selected">Selecione uma bebida</span>
-              <svg class="dropdown-arrow" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="dropdown-content">
-              <div class="dropdown-options">
-                <div class="dropdown-option">
-                  <input type="radio" name="bebida" id="bebida-coca" value="coca" data-price="6" data-name="Coca-Cola" />
-                  <label for="bebida-coca"><span class="drink-name">Coca-Cola</span><span class="drink-price">+ R$ 6,00</span></label>
-                </div>
-                <div class="dropdown-option">
-                  <input type="radio" name="bebida" id="bebida-pepsi" value="pepsi" data-price="5" data-name="Pepsi" />
-                  <label for="bebida-pepsi"><span class="drink-name">Pepsi</span><span class="drink-price">+ R$ 5,00</span></label>
-                </div>
-                <div class="dropdown-option">
-                  <input type="radio" name="bebida" id="bebida-guarana" value="guarana" data-price="5" data-name="Guaraná" />
-                  <label for="bebida-guarana"><span class="drink-name">Guaraná</span><span class="drink-price">+ R$ 5,00</span></label>
-                </div>
-                <div class="dropdown-option">
-                  <input type="radio" name="bebida" id="bebida-fanta" value="fanta" data-price="7" data-name="Fanta" />
-                  <label for="bebida-fanta"><span class="drink-name">Fanta</span><span class="drink-price">+ R$ 7,00</span></label>
-                </div>
-                <div class="dropdown-option">
-                  <input type="radio" name="bebida" id="bebida-nenhuma" value="nenhuma" data-price="0" data-name="Sem bebida" />
-                  <label for="bebida-nenhuma"><span class="drink-name">Sem bebida</span><span class="drink-price">R$ 0,00</span></label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Recebimento -->
         <div class="section">
           <h2 class="section-title">Recebimento</h2>
           <div class="radio-group">
             <div class="radio-option">
-              <input type="radio" name="recebimento" id="recebimento-entrega" value="entrega" data-frete="8" required />
+              <input
+                type="radio"
+                name="recebimento"
+                id="recebimento-entrega"
+                value="entrega"
+                data-frete="8"
+                required
+              />
               <label for="recebimento-entrega" class="radio-label">
                 <span class="name">Entrega</span>
                 <span class="price">+ R$ 8,00</span>
               </label>
             </div>
             <div class="radio-option">
-              <input type="radio" name="recebimento" id="recebimento-buscar" value="buscar" data-frete="0" />
+              <input
+                type="radio"
+                name="recebimento"
+                id="recebimento-buscar"
+                value="buscar"
+                data-frete="0"
+              />
               <label for="recebimento-buscar" class="radio-label">
                 <span class="name">Retirar</span>
                 <span class="price">Grátis</span>
@@ -294,10 +377,34 @@
           </div>
           <div class="endereco-container" id="endereco-container">
             <div class="endereco-fields">
-              <input type="text" class="input-field" placeholder="Bairro" name="bairro" id="input-bairro" />
-              <input type="text" class="input-field" placeholder="Quadra" name="quadra" id="input-quadra" />
-              <input type="text" class="input-field" placeholder="Rua" name="rua" id="input-rua" />
-              <input type="text" class="input-field" placeholder="Número" name="numero" id="input-numero" />
+              <input
+                type="text"
+                class="input-field"
+                placeholder="Bairro"
+                name="bairro"
+                id="input-bairro"
+              />
+              <input
+                type="text"
+                class="input-field"
+                placeholder="Quadra"
+                name="quadra"
+                id="input-quadra"
+              />
+              <input
+                type="text"
+                class="input-field"
+                placeholder="Rua"
+                name="rua"
+                id="input-rua"
+              />
+              <input
+                type="text"
+                class="input-field"
+                placeholder="Número"
+                name="numero"
+                id="input-numero"
+              />
             </div>
           </div>
         </div>
@@ -305,7 +412,12 @@
         <!-- Observações -->
         <div class="section">
           <h2 class="section-title">Observações</h2>
-          <textarea class="input-field" name="observacoes" id="observacoes" placeholder="Ex: sem cebola, pouco sal, molho à parte..."></textarea>
+          <textarea
+            class="input-field"
+            name="observacoes"
+            id="observacoes"
+            placeholder="Ex: sem cebola, pouco sal, molho à parte..."
+          ></textarea>
         </div>
 
         <div class="divider"></div>
@@ -319,7 +431,9 @@
 
         <!-- Botões -->
         <div class="form-footer">
-          <button type="button" class="btn btn-cancel" id="btn-cancelar">Voltar</button>
+          <button type="button" class="btn btn-cancel" id="btn-cancelar">
+            Voltar
+          </button>
           <button type="submit" class="btn btn-submit">Enviar Pedido</button>
         </div>
       </form>
