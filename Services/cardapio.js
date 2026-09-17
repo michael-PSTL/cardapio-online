@@ -2,21 +2,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── DADOS DO CARDÁPIO ───────────────────────────────────────
 
   const marmitasData = [
-    { id: "assado-panela", nome: "Assado de panela", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
-    { id: "peixe-frito", nome: "Peixe Frito", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
-    { id: "carne-porco", nome: "Carne de porco", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
-    { id: "cozidao", nome: "Cozidão", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
-    { id: "frango-assado", nome: "Frango assado", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
-    { id: "strogonoff", nome: "Strogonoff", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
-    { id: "empanado-frango", nome: "Empanado de frango", preco: 99.99, img: "/assets/img/imagem-restaurante.jfif" },
+    { id: "assado-panela", nome: "Assado de panela", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
+    { id: "peixe-frito", nome: "Peixe Frito", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
+    { id: "carne-porco", nome: "Carne de porco", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
+    { id: "cozidao", nome: "Cozidão", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
+    { id: "frango-assado", nome: "Frango assado", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
+    { id: "strogonoff", nome: "Strogonoff", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
+    { id: "empanado-frango", nome: "Empanado de frango", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
   ];
 
   const bebidasData = [
-    { id: "coca-lata", nome: "Coca-Cola Lata 350ml", preco: 6.0, img: "/assets/img/bebida-coca-lata.jpg" },
-    { id: "coca-2l", nome: "Coca-Cola 2L", preco: 12.0, img: "/assets/img/bebida-coca-2l.jpg" },
-    { id: "guarana-lata", nome: "Guaraná Lata 350ml", preco: 5.0, img: "/assets/img/bebida-guarana-lata.jpg" },
-    { id: "guarana-2l", nome: "Guaraná 2L", preco: 10.0, img: "/assets/img/bebida-guarana-2l.jpg" },
-    { id: "suco-natural", nome: "Suco Natural 500ml", preco: 8.0, img: "/assets/img/bebida-suco.jpg" },
+    { id: "coca-lata", nome: "Coca-Cola Lata 350ml", preco: 6.0, img: "/assets/img/imagem-cocacola.webp" },
+    { id: "coca-2l", nome: "Coca-Cola 2L", preco: 12.0, img: "/assets/img/imagem-cocacola.webp" },
+    { id: "guarana-lata", nome: "Guaraná Lata 350ml", preco: 5.0, img: "/assets/img/imagem-cocacola.webp" },
+    { id: "guarana-2l", nome: "Guaraná 2L", preco: 10.0, img: "/assets/img/imagem-cocacola.webp" },
+    { id: "suco-natural", nome: "Suco Natural 500ml", preco: 8.0, img: "/assets/img/imagem-cocacola.webp" },
   ];
 
   const porcoesData = [

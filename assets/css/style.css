@@ -14,6 +14,8 @@
   --text: #f5f0eb;
   --text-muted: #8a8580;
   --text-faint: #2a2a2a;
+  --success: #2e8b57;
+  --danger: #e04b3f;
   --border: rgba(255, 107, 0, 0.12);
   --border-hover: rgba(255, 107, 0, 0.4);
   --radius-sm: 8px;
@@ -31,9 +33,28 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+  /* ─── REMOVE A "PISCADA" AZUL AO TOCAR NO MOBILE ─── */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* remove também o contorno padrão no toque, mantendo o foco por teclado */
+a, button, input, textarea, select, label,
+[role="button"], [tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+label:focus:not(:focus-visible) {
+  outline: none;
+}
 
 body {
   font-family: var(--font-body);
@@ -42,6 +63,7 @@ body {
   line-height: 1.6;
   padding-top: 80px;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body::before {

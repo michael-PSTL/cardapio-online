@@ -2,7 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Restaurante</title>
     <link rel="icon" href="/assets/img/restaurante.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -154,51 +154,109 @@
 
     <!-- ─── LOCALIZAÇÃO ─── -->
     <section class="LOCALIZACAO" id="Localizacao">
-      <h2 class="localização-TITULO">Nossa <i>Localização</i></h2>
-      <div class="localização-BOX">
-        <div class="INFORMAÇÕES-Texto">
-          <div class="info-item">
-            <span class="localização-INFORMAÇÕES">Cidade</span>
-            <p class="informações">São José de Ribamar</p>
-          </div>
-          <div class="info-item">
-            <span class="localização-INFORMAÇÕES">Bairro</span>
-            <p class="informações">Parque Vitória</p>
-          </div>
-          <div class="info-item">
-            <span class="localização-INFORMAÇÕES">Quadra</span>
-            <p class="informações">4</p>
-          </div>
-          <div class="info-item">
-            <span class="localização-INFORMAÇÕES">Rua</span>
-            <p class="informações">20</p>
-          </div>
-          <div class="info-item">
-            <span class="localização-INFORMAÇÕES">Número</span>
-            <p class="informações">1</p>
-          </div>
+      <div class="localizacao-wrapper">
+        <div class="section-header">
+          <h2 class="localização-TITULO">Nossa <i>Localização</i></h2>
         </div>
 
-        <div class="INFORMAÇÕES-Imagem">
-          <div class="IMG">
-            <img
-              src="/img/imagem-local.jfif"
-              alt="Foto do local"
-              class="ImagemLocal"
-            />
-            <img
-              src="/img/imagem-local.jfif"
-              alt="Foto do local"
-              class="ImagemLocal"
-            />
+        <div class="localização-BOX">
+          <!-- ── PAINEL DE INFORMAÇÕES ── -->
+          <div class="local-painel">
+            <!-- Status calculado em tempo real pelo Sistema.js -->
+            <div class="local-status" id="local-status">
+              <span class="local-status-dot" aria-hidden="true"></span>
+              <span class="local-status-texto" id="local-status-texto">
+                Verificando horário…
+              </span>
+            </div>
+
+            <address class="local-endereco">
+              <strong class="local-endereco-rua">Rua 20, nº 1</strong>
+              <span class="local-endereco-linha">Quadra 4 &middot; Parque Vitória</span>
+              <span class="local-endereco-linha">São José de Ribamar — MA</span>
+            </address>
+
+            <ul class="local-detalhes">
+              <li class="local-detalhe">
+                <span class="local-detalhe-rotulo">Bairro</span>
+                <span class="local-detalhe-valor">Parque Vitória</span>
+              </li>
+              <li class="local-detalhe">
+                <span class="local-detalhe-rotulo">Quadra</span>
+                <span class="local-detalhe-valor">4</span>
+              </li>
+              <li class="local-detalhe">
+                <span class="local-detalhe-rotulo">Rua</span>
+                <span class="local-detalhe-valor">20</span>
+              </li>
+              <li class="local-detalhe">
+                <span class="local-detalhe-rotulo">Número</span>
+                <span class="local-detalhe-valor">1</span>
+              </li>
+            </ul>
+
+            <div class="local-horarios">
+              <h3 class="local-horarios-titulo">Horário de Funcionamento</h3>
+              <ul class="local-horarios-lista" id="local-horarios-lista">
+                <li data-dias="1,2,3,4,5">
+                  <span>Seg – Sex</span><span>11h – 15h</span>
+                </li>
+                <li data-dias="6"><span>Sábado</span><span>11h – 16h</span></li>
+                <li data-dias="0"><span>Domingo</span><span>Fechado</span></li>
+              </ul>
+            </div>
+
+            <div class="local-acoes">
+              <a
+                class="local-btn local-btn-principal"
+                id="btn-como-chegar"
+                href="https://www.google.com/maps/dir/?api=1&destination=Restaurante+Tempero+Caseiro%2C+S%C3%A3o+Jos%C3%A9+de+Ribamar+-+MA"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                Como chegar
+              </a>
+
+              <button class="local-btn" id="btn-copiar-endereco" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="12" height="12" rx="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="btn-copiar-texto">Copiar endereço</span>
+              </button>
+            </div>
           </div>
-          <div class="IFRAME">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d837.9466407093498!2d-44.20318825579027!3d-2.5172147209284774!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7f6919d58c605db%3A0x90869c3fca24e61d!2sRestaurante%20Tempero%20Caseiro!5e0!3m2!1spt-BR!2sbr!4v1770133126844!5m2!1spt-BR!2sbr"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
+
+          <!-- ── MAPA + FOTOS ── -->
+          <div class="local-visual">
+            <div class="local-mapa">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d837.9466407093498!2d-44.20318825579027!3d-2.5172147209284774!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7f6919d58c605db%3A0x90869c3fca24e61d!2sRestaurante%20Tempero%20Caseiro!5e0!3m2!1spt-BR!2sbr!4v1770133126844!5m2!1spt-BR!2sbr"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Mapa da localização do restaurante"
+              ></iframe>
+            </div>
+
+            <div class="local-fotos">
+              <img
+                src="/img/imagem-local.jfif"
+                alt="Fachada do restaurante"
+                class="ImagemLocal"
+                loading="lazy"
+              />
+              <img
+                src="/img/imagem-local.jfif"
+                alt="Salão interno do restaurante"
+                class="ImagemLocal"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -282,6 +340,29 @@
         </div>
       </div>
     </footer>
+
+    <!-- ─── BOTÃO SUSPENSO: FINALIZAR PEDIDO ─── -->
+    <button
+      class="fab-finalizar"
+      id="fab-finalizar"
+      type="button"
+      aria-label="Finalizar pedido"
+    >
+      <span class="fab-icone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <path d="M3 6h18"></path>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+      </span>
+
+      <span class="fab-texto">
+        <strong>Finalizar Pedido</strong>
+        <small id="fab-resumo">0 itens · R$ 0,00</small>
+      </span>
+
+      <span class="fab-seta" aria-hidden="true">&#8250;</span>
+    </button>
 
     <!-- ─── CARRINHO (DRAWER) ─── -->
     <div class="carrinho-overlay" id="carrinho-overlay">

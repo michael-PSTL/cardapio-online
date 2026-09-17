@@ -46,6 +46,129 @@
 
 .cart-badge.visible { transform: scale(1); }
 
+/* ─── BOTÃO SUSPENSO: FINALIZAR PEDIDO ─── */
+.fab-finalizar {
+  position: fixed;
+  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 20px 12px 14px;
+
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-align: left;
+
+  box-shadow:
+    0 10px 30px rgba(255, 107, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.45);
+
+  /* escondido enquanto o carrinho estiver vazio */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(24px) scale(0.94);
+
+  transition:
+    opacity 0.28s ease,
+    transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+    visibility 0.28s,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+
+  z-index: 8000;
+}
+
+.fab-finalizar.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.fab-finalizar:hover {
+  background: var(--primary-light);
+  box-shadow:
+    0 14px 38px rgba(255, 107, 0, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.fab-finalizar:active { transform: translateY(0) scale(0.97); }
+
+.fab-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.fab-icone svg {
+  width: 20px;
+  height: 20px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fab-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.fab-texto strong {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fab-texto small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+.fab-seta {
+  font-size: 1.45rem;
+  line-height: 1;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* pulso sutil ao adicionar um item novo */
+.fab-finalizar.pulsar {
+  animation: fab-pulso 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fab-pulso {
+  0%   { transform: translateY(0) scale(1); }
+  45%  { transform: translateY(0) scale(1.07); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* espaço extra no fim da página enquanto o botão estiver visível */
+body.com-fab { padding-bottom: 96px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-finalizar,
+  .fab-finalizar.pulsar { transition: opacity 0.2s ease; animation: none; }
+}
+
 /* ─── OVERLAY / DRAWER DO CARRINHO ─── */
 .carrinho-overlay {
   position: fixed;
@@ -206,7 +329,7 @@
 .carrinho-item-remover:hover { color: #e04b3f; }
 
 .carrinho-footer {
-  padding: 18px 20px 22px;
+  padding: 18px 20px calc(22px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--text-faint);
 }
 
@@ -256,6 +379,26 @@
 .Comprar.added { background: #2e8b57; }
 
 /* ─── RESPONSIVO ─── */
+@media (max-width: 768px) {
+  .fab-finalizar {
+    left: 14px;
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    justify-content: space-between;
+    border-radius: var(--radius-lg);
+    padding: 12px 16px 12px 12px;
+  }
+
+  .fab-texto { flex: 1; }
+}
+
 @media (max-width: 480px) {
   .carrinho-drawer { width: 100%; }
+
+  .fab-icone { width: 34px; height: 34px; }
+  .fab-icone svg { width: 18px; height: 18px; }
+  .fab-texto strong { font-size: 0.8rem; }
+  .fab-texto small { font-size: 0.68rem; }
+
+  body.com-fab { padding-bottom: 88px; }
 }

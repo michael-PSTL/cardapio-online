@@ -3,6 +3,7 @@ const Carrinho = (() => {
   let itens = [];
 
   let cartBtn, cartBadge, overlay, fechar, lista, vazio, subtotalEl, btnFinalizar;
+  let fab, fabResumo;
 
   // ─── PERSISTÊNCIA ────────────────────────────────────────────
   function carregar() {
@@ -44,6 +45,7 @@ const Carrinho = (() => {
     salvar();
     render();
     animarBadge();
+    animarFab();
   }
 
   function alterarQuantidade(id, delta) {
@@ -74,6 +76,13 @@ const Carrinho = (() => {
     cartBadge.classList.add("visible");
   }
 
+  function animarFab() {
+    if (!fab) return;
+    fab.classList.remove("pulsar");
+    void fab.offsetWidth;
+    fab.classList.add("pulsar");
+  }
+
   function abrirCarrinho() {
     overlay.classList.add("active");
     if (typeof window.travarScrollPagina === "function") window.travarScrollPagina();
@@ -85,6 +94,31 @@ const Carrinho = (() => {
     const formularioAberto = document.getElementById("formulario-overlay")?.style.display === "block";
     if (!formularioAberto && typeof window.destravarScrollPagina === "function") {
       window.destravarScrollPagina();
+    }
+  }
+
+  // Abre direto o formulário de pedido (usado pelo botão suspenso).
+  function irParaFinalizacao() {
+    if (itens.length === 0) return;
+    fecharCarrinho();
+    if (typeof window.abrirFormularioPedido === "function") {
+      window.abrirFormularioPedido();
+    }
+  }
+
+  function renderFab() {
+    if (!fab) return;
+
+    const totalItens = getTotalItens();
+    const temItens = totalItens > 0;
+
+    fab.classList.toggle("visible", temItens);
+    document.body.classList.toggle("com-fab", temItens);
+
+    if (fabResumo) {
+      const rotulo = totalItens === 1 ? "item" : "itens";
+      const valor = getSubtotal().toFixed(2).replace(".", ",");
+      fabResumo.textContent = `${totalItens} ${rotulo} · R$ ${valor}`;
     }
   }
 
@@ -125,6 +159,8 @@ const Carrinho = (() => {
     lista.querySelectorAll(".carrinho-item-remover").forEach((btn) => {
       btn.addEventListener("click", () => removerItem(btn.dataset.id));
     });
+
+    renderFab();
   }
 
   // ─── INICIALIZAÇÃO ───────────────────────────────────────────
@@ -140,17 +176,15 @@ const Carrinho = (() => {
     subtotalEl   = document.getElementById("carrinho-subtotal");
     btnFinalizar = document.getElementById("carrinho-finalizar");
 
+    fab       = document.getElementById("fab-finalizar");
+    fabResumo = document.getElementById("fab-resumo");
+
     cartBtn.addEventListener("click", abrirCarrinho);
     fechar.addEventListener("click", fecharCarrinho);
     overlay.addEventListener("click", (e) => { if (e.target === overlay) fecharCarrinho(); });
 
-    btnFinalizar.addEventListener("click", () => {
-      if (itens.length === 0) return;
-      fecharCarrinho();
-      if (typeof window.abrirFormularioPedido === "function") {
-        window.abrirFormularioPedido();
-      }
-    });
+    btnFinalizar.addEventListener("click", irParaFinalizacao);
+    fab?.addEventListener("click", irParaFinalizacao);
 
     render();
   }
