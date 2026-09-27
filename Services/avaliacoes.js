@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ─── DADOS DAS AVALIAÇÕES ────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // 🔧 CONFIGURAÇÃO — DEPOIMENTOS EXIBIDOS NA SEÇÃO "AVALIAÇÕES"
+  //
+  // Adicione, remova ou edite depoimentos aqui. Cada objeto é um
+  // card na seção. `estrelas` vai de 1 a 5.
+  // ═══════════════════════════════════════════════════════════
 
   const avaliacoesData = [
     {
@@ -46,7 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
-  // ─── RENDERIZAÇÃO ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // RENDERIZAÇÃO
+  // ═══════════════════════════════════════════════════════════
 
   function svgEstrela(preenchida) {
     return `
@@ -105,6 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
   }
+
+  // ─── INICIALIZAÇÃO ───────────────────────────────────────────
 
   renderAvaliacoes();
 });

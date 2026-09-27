@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/cardapio.css" />
     <link rel="stylesheet" href="/assets/css/avaliacoes.css" />
-    <link rel="stylesheet" href="/assets/css/informações.css" />
+    <link rel="stylesheet" href="/assets/css/informacoes.css" />
     <link rel="stylesheet" href="/assets/css/form.css" />
     <link rel="stylesheet" href="/assets/css/carrinho.css" />
   </head>
@@ -23,7 +23,7 @@
     <header class="menu">
       <div class="menu-BOX">
         <h1 class="menu-TITULO">Restaurante</h1>
-        <nav class="navegação">
+        <nav class="navegacao">
           <ul>
             <li><a href="#Cardapio" class="nav">Cardápio</a></li>
             <li><a href="#Avaliacoes" class="nav">Avaliações</a></li>
@@ -156,10 +156,10 @@
     <section class="LOCALIZACAO" id="Localizacao">
       <div class="localizacao-wrapper">
         <div class="section-header">
-          <h2 class="localização-TITULO">Nossa <i>Localização</i></h2>
+          <h2 class="localizacao-TITULO">Nossa <i>Localização</i></h2>
         </div>
 
-        <div class="localização-BOX">
+        <div class="localizacao-BOX">
           <!-- ── PAINEL DE INFORMAÇÕES ── -->
           <div class="local-painel">
             <!-- Status calculado em tempo real pelo Sistema.js -->
@@ -197,13 +197,12 @@
 
             <div class="local-horarios">
               <h3 class="local-horarios-titulo">Horário de Funcionamento</h3>
-              <ul class="local-horarios-lista" id="local-horarios-lista">
-                <li data-dias="1,2,3,4,5">
-                  <span>Seg – Sex</span><span>11h – 15h</span>
-                </li>
-                <li data-dias="6"><span>Sábado</span><span>11h – 16h</span></li>
-                <li data-dias="0"><span>Domingo</span><span>Fechado</span></li>
-              </ul>
+              <!--
+                Lista preenchida dinamicamente pelo Services/Sistema.js,
+                a partir de HORARIOS_SEMANA (fonte única do horário).
+                Não escreva <li> aqui manualmente — edite o horário em Sistema.js.
+              -->
+              <ul class="local-horarios-lista" id="local-horarios-lista"></ul>
             </div>
 
             <div class="local-acoes">
@@ -285,11 +284,11 @@
 
           <div class="contato-col">
             <h4 class="contato-col-titulo">Horário de Funcionamento</h4>
-            <ul class="contato-horario">
-              <li><span>Seg – Sex</span><span>11h – 15h</span></li>
-              <li><span>Sábado</span><span>11h – 16h</span></li>
-              <li><span>Domingo</span><span>Fechado</span></li>
-            </ul>
+            <!--
+              Mesma fonte única do painel de Localização: preenchida pelo
+              Services/Sistema.js a partir de HORARIOS_SEMANA.
+            -->
+            <ul class="contato-horario" id="footer-horarios-lista"></ul>
           </div>
 
           <div class="contato-col">
@@ -461,6 +460,13 @@
               <input
                 type="text"
                 class="input-field"
+                placeholder="CEP"
+                name="cep"
+                id="input-cep"
+              />
+              <input
+                type="text"
+                class="input-field"
                 placeholder="Bairro"
                 name="bairro"
                 id="input-bairro"
@@ -468,9 +474,9 @@
               <input
                 type="text"
                 class="input-field"
-                placeholder="Quadra"
-                name="quadra"
-                id="input-quadra"
+                placeholder="Complemento"
+                name="complemento"
+                id="input-complemento"
               />
               <input
                 type="text"

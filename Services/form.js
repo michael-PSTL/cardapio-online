@@ -7,11 +7,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancelar = document.getElementById("btn-cancelar");
   const resumoCarrinhoForm = document.getElementById("resumo-carrinho-form");
 
+  // 🔧 CONFIGURAÇÃO — número de WhatsApp que recebe os pedidos.
+  // Formato: código do país + DDD + número, sem espaços, traços ou "+".
   const NUMERO_WHATSAPP = "5598984975025";
 
   let precos = { frete: 0 };
 
-  // ─── RESUMO E TOTAL ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // RESUMO E TOTAL
+  // ═══════════════════════════════════════════════════════════
 
   function renderResumoCarrinhoForm() {
     if (!resumoCarrinhoForm || !window.Carrinho) return;
@@ -46,7 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (totalBreakdown) totalBreakdown.textContent = partes.join(" · ");
   }
 
-  // ─── ABRIR / FECHAR ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // ABRIR / FECHAR O FORMULÁRIO
+  // ═══════════════════════════════════════════════════════════
 
   function abrirFormulario() {
     if (!window.Carrinho || window.Carrinho.getItens().length === 0) return;
@@ -81,7 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (evento.target === overlay) fecharFormulario();
   });
 
-  // ─── RECEBIMENTO (entrega x retirada) ────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // RECEBIMENTO (entrega x retirada)
+  // ═══════════════════════════════════════════════════════════
+  // O valor do frete de cada opção vem do atributo data-frete de
+  // cada <input type="radio"> no index.html (ex.: data-frete="8").
 
   document.querySelectorAll('input[name="recebimento"]').forEach((radio) => {
     radio.addEventListener("change", function () {
@@ -91,7 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ─── ENVIO DO PEDIDO (WhatsApp) ──────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // ENVIO DO PEDIDO (WhatsApp)
+  // ═══════════════════════════════════════════════════════════
 
   form?.addEventListener("submit", (evento) => {
     evento.preventDefault();
@@ -115,8 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (dados.recebimento === "entrega") {
       enderecoTexto =
         `\n📍 Endereço:\n` +
+        `   CEP: ${dados.cep || "Não informado"}\n` +
         `   Bairro: ${dados.bairro || "Não informado"}\n` +
-        `   Quadra: ${dados.quadra || "Não informado"}\n` +
+        `   Complemento: ${dados.complemento || "Não informado"}\n` +
         `   Rua: ${dados.rua || "Não informado"}\n` +
         `   Número: ${dados.numero || "Não informado"}`;
     }

@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ─── DADOS DO CARDÁPIO ───────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // 🔧 CONFIGURAÇÃO — ITENS DO CARDÁPIO
+  //
+  // Edite os itens, nomes, preços e imagens aqui. Cada objeto é
+  // um card do carrossel. `id` precisa ser único dentro da lista.
+  // ═══════════════════════════════════════════════════════════
 
   const marmitasData = [
     { id: "assado-panela", nome: "Assado de panela", preco: 99.99, img: "/assets/img/imagem-marmita.avif" },
@@ -20,13 +25,15 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const porcoesData = [
-    { id: "arroz", nome: "Porção de Arroz", preco: 8.0, img: "/assets/img/porcao-arroz.jpg" },
-    { id: "feijao", nome: "Porção de Feijão", preco: 8.0, img: "/assets/img/porcao-feijao.jpg" },
-    { id: "farofa", nome: "Porção de Farofa", preco: 7.0, img: "/assets/img/porcao-farofa.jpg" },
-    { id: "salada", nome: "Porção de Salada", preco: 7.0, img: "/assets/img/porcao-salada.jpg" },
+    { id: "arroz", nome: "Porção de Arroz", preco: 8.0, img: "/assets/img/imagem-porcao.webp" },
+    { id: "feijao", nome: "Porção de Feijão", preco: 8.0, img: "/assets/img/imagem-porcao.webp" },
+    { id: "farofa", nome: "Porção de Farofa", preco: 7.0, img: "/assets/img/imagem-porcao.webp" },
+    { id: "salada", nome: "Porção de Salada", preco: 7.0, img: "/assets/img/imagem-porcao.webp" },
   ];
 
-  // ─── RENDERIZAÇÃO DOS CARDS ──────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // RENDERIZAÇÃO DOS CARDS
+  // ═══════════════════════════════════════════════════════════
 
   function criarCardHTML(item) {
     return `
@@ -40,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <h4 class="cardapio-nome">${item.nome}</h4>
 
           <div class="opcoes-compra">
-            <span class="Preço">R$ ${item.preco.toFixed(2).replace(".", ",")}</span>
+            <span class="Preco">R$ ${item.preco.toFixed(2).replace(".", ",")}</span>
             <button class="Comprar" data-id="${item.id}" type="button">Adicionar</button>
           </div>
         </div>
@@ -74,7 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ─── DESLIZE SUAVE (arraste + inércia) ───────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // DESLIZE SUAVE DO CARROSSEL (arraste + inércia)
+  //
+  // ⚠️ Lógica interna do carrossel — normalmente não precisa
+  // editar nada aqui além dos valores de ajuste fino abaixo.
+  // ═══════════════════════════════════════════════════════════
 
   const FRICCAO = 0.94; // quanto mais perto de 1, mais tempo o deslize "desliza" sozinho
   const VELOCIDADE_MINIMA = 0.02;
@@ -103,6 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let ultimoTempo = 0;
     let velocidade = 0;
     let frame = null;
+
+    // Guarda o pointerId do toque/clique atual. É usado para só capturar
+    // o pointer (ver aoMover) depois que um arraste de verdade é confirmado.
+    let pointerIdAtual = null;
 
     function calcularLimites() {
       limiteMin = Math.min(0, container.clientWidth - track.scrollWidth);
@@ -188,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       arrastando = true;
       moveuDeVerdade = false;
+      pointerIdAtual = evento.pointerId;
 
       pontoInicialX = evento.clientX;
       posInicial = posX;
@@ -196,8 +213,17 @@ document.addEventListener("DOMContentLoaded", () => {
       ultimoTempo = performance.now();
       velocidade = 0;
 
-      container.setPointerCapture?.(evento.pointerId);
       container.classList.add("arrastando");
+
+      // IMPORTANTE: NÃO chamamos container.setPointerCapture aqui.
+      // Se a captura acontecesse em todo pointerdown (mesmo em um
+      // clique simples, sem arraste), o navegador redireciona o
+      // "click" de compatibilidade para o container em vez do
+      // elemento realmente pressionado — e era exatamente isso que
+      // fazia o botão "Adicionar" não responder ao clique do mouse
+      // (só funcionava via teclado, que não passa por esse fluxo).
+      // A captura só acontece em aoMover, quando um arraste de
+      // verdade é confirmado — nunca em um clique simples.
     }
 
     function aoMover(evento) {
@@ -207,6 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!moveuDeVerdade && Math.abs(deslocamento) > LIMIAR_ARRASTE) {
         moveuDeVerdade = true;
+        container.setPointerCapture?.(pointerIdAtual);
       }
 
       if (moveuDeVerdade && evento.cancelable) {

@@ -1,11 +1,17 @@
 const Carrinho = (() => {
+  // 🔧 CONFIGURAÇÃO — chave usada no localStorage para salvar o carrinho.
+  // Só precisa mudar isso se for rodar mais de um site nesse mesmo domínio.
   const STORAGE_KEY = "restaurante_carrinho";
+
   let itens = [];
 
   let cartBtn, cartBadge, overlay, fechar, lista, vazio, subtotalEl, btnFinalizar;
   let fab, fabResumo;
 
-  // ─── PERSISTÊNCIA ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // PERSISTÊNCIA (salvar/carregar carrinho do navegador)
+  // ═══════════════════════════════════════════════════════════
+
   function carregar() {
     try {
       const salvo = localStorage.getItem(STORAGE_KEY);
@@ -23,7 +29,10 @@ const Carrinho = (() => {
     }
   }
 
-  // ─── LEITURA ─────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // LEITURA (usado por outros arquivos: cardapio.js, form.js...)
+  // ═══════════════════════════════════════════════════════════
+
   function getItens() { return itens; }
 
   function getSubtotal() {
@@ -34,7 +43,10 @@ const Carrinho = (() => {
     return itens.reduce((acc, item) => acc + item.quantidade, 0);
   }
 
-  // ─── AÇÕES ───────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // AÇÕES (adicionar, remover, alterar quantidade, limpar)
+  // ═══════════════════════════════════════════════════════════
+
   function adicionarItem(produto) {
     const existente = itens.find((i) => i.id === produto.id);
     if (existente) {
@@ -69,7 +81,10 @@ const Carrinho = (() => {
     render();
   }
 
-  // ─── UI ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // INTERFACE (badge do carrinho, drawer, botão flutuante)
+  // ═══════════════════════════════════════════════════════════
+
   function animarBadge() {
     cartBadge.classList.remove("visible");
     void cartBadge.offsetWidth;
@@ -163,7 +178,10 @@ const Carrinho = (() => {
     renderFab();
   }
 
-  // ─── INICIALIZAÇÃO ───────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // INICIALIZAÇÃO
+  // ═══════════════════════════════════════════════════════════
+
   function init() {
     carregar();
 
@@ -190,6 +208,10 @@ const Carrinho = (() => {
   }
 
   document.addEventListener("DOMContentLoaded", init);
+
+  // ═══════════════════════════════════════════════════════════
+  // API PÚBLICA (usada por cardapio.js, form.js, etc.)
+  // ═══════════════════════════════════════════════════════════
 
   return {
     adicionarItem,

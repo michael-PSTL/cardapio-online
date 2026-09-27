@@ -14,7 +14,7 @@
   margin: 0 auto;
 }
 
-.localização-TITULO {
+.localizacao-TITULO {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 4vw, 3.2rem);
   font-weight: 700;
@@ -25,12 +25,12 @@
   margin-bottom: 0;
 }
 
-.localização-TITULO i {
+.localizacao-TITULO i {
   color: var(--primary);
   font-style: italic;
 }
 
-.localização-BOX {
+.localizacao-BOX {
   display: grid;
   grid-template-columns: minmax(300px, 400px) 1fr;
   gap: 24px;
@@ -494,7 +494,7 @@
    ═══════════════════════════════════════════════════════════ */
 
 @media (max-width: 1024px) {
-  .localização-BOX {
+  .localizacao-BOX {
     grid-template-columns: 1fr;
   }
 
@@ -532,7 +532,7 @@
 @media (max-width: 480px) {
   .LOCALIZACAO { padding: 48px 12px 64px; }
 
-  .localização-BOX { gap: 16px; }
+  .localizacao-BOX { gap: 16px; }
 
   .local-painel { padding: 20px 16px; }
 

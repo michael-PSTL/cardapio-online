@@ -1,1 +1,0 @@
-//aqui futuramente teremos as funções para consumir a API do backendenquanto

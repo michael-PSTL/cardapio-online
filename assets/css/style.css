@@ -2,7 +2,7 @@
 
 :root {
   --primary: #ff6b00;
-  --primary-light: #ff8c33;
+  --primary-light: #e97218;
   --primary-dark: #cc5500;
   --primary-glow: rgba(255, 107, 0, 0.25);
   --gold: #c9a84c;
@@ -116,7 +116,7 @@ header {
   letter-spacing: -0.02em;
 }
 
-.navegação ul {
+.navegacao ul {
   display: flex;
   gap: 4px;
   list-style: none;
@@ -219,7 +219,7 @@ body.scroll-travado {
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 960px) {
-  .localização-BOX {
+  .localizacao-BOX {
     grid-template-columns: 1fr;
   }
 
