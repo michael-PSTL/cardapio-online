@@ -105,7 +105,7 @@
 .carrossel-btn:hover {
   border-color: var(--border-hover);
   color: var(--primary);
-  background: rgba(255, 106, 0, 0.658);
+  background: rgba(27, 12, 1, 0.658);
   transform: scale(1.05);
 }
 
@@ -453,7 +453,7 @@
 
   .Comprar {
     padding: 8px 12px 8px 10px;
-    font-size: 0.68rem;
+    font-size: 0.58rem;
   }
 
   .Comprar::before {

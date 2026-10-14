@@ -12,6 +12,11 @@
 }
 
 form#pedido-form {
+  /* Cores de estado (escopo do formulário) */
+  --erro: #ff6b6b;
+  --sucesso: #3ecf8e;
+  --aviso: #f5b84a;
+
   background: var(--bg-card);
   border: 1px solid rgba(255,107,0,0.15);
   border-radius: var(--radius-xl);
@@ -27,6 +32,8 @@ form#pedido-form {
   z-index: 10000;
   box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 60px rgba(255,107,0,0.05);
 }
+
+form#pedido-form:focus { outline: none; }
 
 form#pedido-form::-webkit-scrollbar { width: 3px; }
 form#pedido-form::-webkit-scrollbar-track { background: transparent; }
@@ -81,6 +88,54 @@ form#pedido-form::-webkit-scrollbar-thumb {
   border-radius: 3px;
   flex-shrink: 0;
 }
+
+/* ─── CAMPOS: RÓTULO, DICA E ERRO ─── */
+.field-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.field-hint,
+.field-error {
+  font-size: 0.74rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.field-hint { color: var(--text-muted); }
+
+.field-error {
+  color: var(--erro);
+  font-weight: 500;
+}
+
+.field-hint:not(:empty),
+.field-error:not(:empty) { margin-top: 6px; }
+
+.field-hint[data-estado="ok"] { color: var(--sucesso); }
+.field-hint[data-estado="aviso"] { color: var(--aviso); }
+
+.field-hint[data-estado="carregando"]::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border: 2px solid var(--text-faint);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  vertical-align: -1px;
+  animation: form-giro 0.7s linear infinite;
+}
+
+@keyframes form-giro { to { transform: rotate(360deg); } }
+
+.field-contador { text-align: right; }
 
 /* ─── INPUT NOME ─── */
 .input-nome {
@@ -157,6 +212,13 @@ form#pedido-form::-webkit-scrollbar-thumb {
   border-color: var(--primary);
   background: rgba(255,107,0,0.07);
 }
+
+.radio-option input:focus-visible + .radio-label {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.radio-group[aria-invalid="true"] .radio-label { border-color: var(--erro); }
 
 .radio-label .name {
   color: var(--text-muted);
@@ -271,23 +333,34 @@ form#pedido-form::-webkit-scrollbar-thumb {
 
 .dropdown-option input:checked + label .drink-price { color: var(--primary-light); }
 
-/* ─── ENDEREÇO ─── */
+/* ─── ENDEREÇO (abre/fecha sem depender de altura fixa) ─── */
 .endereco-container {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease, margin 0.35s ease;
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: 0;
+  transition: grid-template-rows 0.35s ease, margin-top 0.35s ease;
 }
 
 .endereco-container.visible {
-  max-height: 280px;
+  grid-template-rows: 1fr;
   margin-top: 14px;
 }
 
-.endereco-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* padding + margem negativa evitam cortar o brilho do :focus */
+.endereco-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 4px;
+  margin: -4px;
 }
+
+.endereco-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 10px;
+}
+
+.endereco-fields .span-2 { grid-column: 1 / -1; }
 
 /* ─── INPUTS GENÉRICOS ─── */
 .input-field {
@@ -315,6 +388,106 @@ textarea.input-field {
   resize: vertical;
   min-height: 75px;
 }
+
+/* ─── ESTADO DE ERRO ─── */
+.field.has-error .input-field { border-color: var(--erro); }
+
+.field.has-error .input-field:focus {
+  border-color: var(--erro);
+  box-shadow: 0 0 0 3px rgba(255,107,107,0.14);
+}
+
+/* ─── TELEFONE: bandeira + DDI fixo | número com máscara | status ─── */
+.telefone-wrap {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-raised);
+  border: 1.5px solid var(--text-faint);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: text;
+  transition: var(--transition);
+}
+
+.telefone-wrap:hover { border-color: rgba(255,107,0,0.3); }
+
+.telefone-wrap:focus-within {
+  border-color: var(--primary);
+  background: rgba(255,107,0,0.03);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.09);
+}
+
+.telefone-prefixo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 0 12px 0 14px;
+  background: rgba(255,255,255,0.035);
+  border-right: 1px solid var(--text-faint);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: default;
+  user-select: none;
+}
+
+.telefone-bandeira {
+  width: 20px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12);
+}
+
+.telefone-wrap .input-nome.telefone-input,
+.telefone-wrap .input-nome.telefone-input:focus,
+.telefone-wrap .input-nome.telefone-input:not(:placeholder-shown) {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  padding: 13px 8px 13px 14px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.telefone-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  color: var(--sucesso);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.telefone-status svg { width: 16px; height: 16px; }
+
+.field.is-valid .telefone-wrap { border-color: rgba(62,207,142,0.5); }
+
+.field.is-valid .telefone-wrap:focus-within {
+  box-shadow: 0 0 0 3px rgba(62,207,142,0.12);
+}
+
+.field.is-valid .telefone-status {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.field.has-error .telefone-wrap { border-color: var(--erro); }
+
+.field.has-error .telefone-wrap:focus-within {
+  box-shadow: 0 0 0 3px rgba(255,107,107,0.14);
+}
+
+.field.has-error .telefone-status { opacity: 0; }
 
 /* ─── DIVISOR ─── */
 .divider {
@@ -379,6 +552,11 @@ textarea.input-field {
   text-transform: uppercase;
 }
 
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .btn-cancel {
   background: var(--bg-raised);
   color: var(--text-muted);
@@ -405,6 +583,22 @@ textarea.input-field {
 }
 
 .btn-submit:active { transform: translateY(0); }
+
+.form-nota {
+  margin: 14px 0 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ─── ACESSIBILIDADE: MOVIMENTO REDUZIDO ─── */
+@media (prefers-reduced-motion: reduce) {
+  form#pedido-form *,
+  form#pedido-form *::before {
+    transition: none !important;
+    animation: none !important;
+  }
+}
 
 /* ─── RESPONSIVO ─── */
 @media (max-width: 520px) {
@@ -437,4 +631,8 @@ textarea.input-field {
   .total-value { font-size: 1.85rem; }
 
   .dropdown.open .dropdown-content { max-height: 220px; }
+}
+
+@media (max-width: 380px) {
+  .endereco-fields { grid-template-columns: 1fr; }
 }

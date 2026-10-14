@@ -2,7 +2,10 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>Restaurante</title>
     <link rel="icon" href="/assets/img/restaurante.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -172,7 +175,9 @@
 
             <address class="local-endereco">
               <strong class="local-endereco-rua">Rua 20, nº 1</strong>
-              <span class="local-endereco-linha">Quadra 4 &middot; Parque Vitória</span>
+              <span class="local-endereco-linha"
+                >Quadra 4 &middot; Parque Vitória</span
+              >
               <span class="local-endereco-linha">São José de Ribamar — MA</span>
             </address>
 
@@ -213,17 +218,31 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                  ></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 Como chegar
               </a>
 
               <button class="local-btn" id="btn-copiar-endereco" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <rect x="9" y="9" width="12" height="12" rx="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  <path
+                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                  ></path>
                 </svg>
                 <span id="btn-copiar-texto">Copiar endereço</span>
               </button>
@@ -348,7 +367,12 @@
       aria-label="Finalizar pedido"
     >
       <span class="fab-icone">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
           <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
           <path d="M3 6h18"></path>
           <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -398,35 +422,138 @@
 
     <!-- ─── FORMULÁRIO DE PEDIDO ─── -->
     <div class="formulario" id="formulario-overlay">
-      <form class="pedido-form" id="pedido-form">
+      <form
+        class="pedido-form"
+        id="pedido-form"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="form-titulo"
+        aria-describedby="form-descricao"
+        tabindex="-1"
+        novalidate
+      >
         <div class="form-header">
-          <div class="marmita-tittle">Finalizar Pedido</div>
-          <p>Confira os itens e escolha as opções abaixo</p>
+          <div class="marmita-tittle" id="form-titulo">Finalizar Pedido</div>
+          <p id="form-descricao">
+            Confira os itens e preencha seus dados para continuar
+          </p>
         </div>
 
         <!-- Resumo do carrinho -->
         <div class="section">
-          <div class="section-tittle">Seus Itens</div>
-          <div class="resumo-carrinho" id="resumo-carrinho-form"></div>
+          <div class="section-tittle" id="rotulo-itens">Seus Itens</div>
+          <div
+            class="resumo-carrinho"
+            id="resumo-carrinho-form"
+            aria-labelledby="rotulo-itens"
+          ></div>
         </div>
 
-        <!-- Nome do Cliente -->
+        <!-- Nome -->
         <div class="section">
-          <div class="section-tittle">Seu Nome</div>
-          <input
-            type="text"
-            class="input-field input-nome"
-            placeholder="Digite seu nome"
-            name="nome"
-            id="input-nome"
-            required
-          />
+          <div class="field">
+            <label class="section-tittle" for="input-nome">Seu Nome</label>
+            <input
+              type="text"
+              class="input-field input-nome"
+              placeholder="Digite seu nome"
+              name="nome"
+              id="input-nome"
+              autocomplete="name"
+              maxlength="80"
+              aria-describedby="erro-nome"
+              required
+            />
+            <p class="field-error" id="erro-nome" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <!-- E-mail -->
+        <div class="section">
+          <div class="field">
+            <label class="section-tittle" for="input-email">Seu E-mail</label>
+            <input
+              type="email"
+              class="input-field input-nome"
+              placeholder="seuemail@exemplo.com"
+              name="email"
+              id="input-email"
+              autocomplete="email"
+              inputmode="email"
+              autocapitalize="none"
+              spellcheck="false"
+              maxlength="120"
+              aria-describedby="erro-email"
+              required
+            />
+            <p class="field-error" id="erro-email" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <!-- Telefone -->
+        <div class="section">
+          <div class="field field-telefone">
+            <label class="section-tittle" for="input-telefone"
+              >Seu Telefone</label
+            >
+            <div class="telefone-wrap">
+              <span class="telefone-prefixo" aria-hidden="true">
+                <svg
+                  class="telefone-bandeira"
+                  viewBox="0 0 20 14"
+                  width="20"
+                  height="14"
+                  focusable="false"
+                >
+                  <rect width="20" height="14" rx="2" fill="#009c3b"></rect>
+                  <path d="M10 2 18 7 10 12 2 7z" fill="#ffdf00"></path>
+                  <circle cx="10" cy="7" r="2.8" fill="#002776"></circle>
+                </svg>
+                <span class="telefone-ddi">+55</span>
+              </span>
+
+              <input
+                type="tel"
+                class="input-field input-nome telefone-input"
+                placeholder="(00) 00000-0000"
+                name="telefone"
+                id="input-telefone"
+                autocomplete="tel-national"
+                inputmode="numeric"
+                aria-describedby="dica-telefone erro-telefone"
+                required
+              />
+
+              <span class="telefone-status" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  focusable="false"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </span>
+            </div>
+            <p class="field-hint" id="dica-telefone">
+              Celular com DDD. O código do país (+55) já está incluído.
+            </p>
+            <p class="field-error" id="erro-telefone" aria-live="polite"></p>
+          </div>
         </div>
 
         <!-- Recebimento -->
         <div class="section">
-          <h2 class="section-title">Recebimento</h2>
-          <div class="radio-group">
+          <h2 class="section-title" id="rotulo-recebimento">Recebimento</h2>
+          <div
+            class="radio-group"
+            role="radiogroup"
+            aria-labelledby="rotulo-recebimento"
+            aria-describedby="erro-recebimento"
+          >
             <div class="radio-option">
               <input
                 type="radio"
@@ -455,56 +582,134 @@
               </label>
             </div>
           </div>
+          <p class="field-error" id="erro-recebimento" aria-live="polite"></p>
+
           <div class="endereco-container" id="endereco-container">
-            <div class="endereco-fields">
-              <input
-                type="text"
-                class="input-field"
-                placeholder="CEP"
-                name="cep"
-                id="input-cep"
-              />
-              <input
-                type="text"
-                class="input-field"
-                placeholder="Bairro"
-                name="bairro"
-                id="input-bairro"
-              />
-              <input
-                type="text"
-                class="input-field"
-                placeholder="Complemento"
-                name="complemento"
-                id="input-complemento"
-              />
-              <input
-                type="text"
-                class="input-field"
-                placeholder="Rua"
-                name="rua"
-                id="input-rua"
-              />
-              <input
-                type="text"
-                class="input-field"
-                placeholder="Número"
-                name="numero"
-                id="input-numero"
-              />
+            <div class="endereco-inner">
+              <div class="endereco-fields">
+                <div class="field span-2">
+                  <label class="field-label" for="input-cep">CEP</label>
+                  <input
+                    type="text"
+                    class="input-field"
+                    placeholder="00000-000"
+                    name="cep"
+                    id="input-cep"
+                    autocomplete="postal-code"
+                    inputmode="numeric"
+                    aria-describedby="status-cep erro-cep"
+                  />
+                  <p class="field-hint" id="status-cep" aria-live="polite"></p>
+                  <p class="field-error" id="erro-cep" aria-live="polite"></p>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="input-cidade">Cidade</label>
+                  <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Cidade"
+                    name="cidade"
+                    id="input-cidade"
+                    autocomplete="address-level2"
+                    maxlength="60"
+                    data-obrigatorio
+                    aria-describedby="erro-cidade"
+                  />
+                  <p
+                    class="field-error"
+                    id="erro-cidade"
+                    aria-live="polite"
+                  ></p>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="input-bairro">Bairro</label>
+                  <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Bairro"
+                    name="bairro"
+                    id="input-bairro"
+                    maxlength="60"
+                    data-obrigatorio
+                    aria-describedby="erro-bairro"
+                  />
+                  <p
+                    class="field-error"
+                    id="erro-bairro"
+                    aria-live="polite"
+                  ></p>
+                </div>
+
+                <div class="field span-2">
+                  <label class="field-label" for="input-rua">Rua</label>
+                  <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Rua"
+                    name="rua"
+                    id="input-rua"
+                    maxlength="80"
+                    data-obrigatorio
+                    aria-describedby="erro-rua"
+                  />
+                  <p class="field-error" id="erro-rua" aria-live="polite"></p>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="input-numero">Número</label>
+                  <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Nº ou S/N"
+                    name="numero"
+                    id="input-numero"
+                    maxlength="10"
+                    data-obrigatorio
+                    aria-describedby="erro-numero"
+                  />
+                  <p
+                    class="field-error"
+                    id="erro-numero"
+                    aria-live="polite"
+                  ></p>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="input-complemento"
+                    >Complemento</label
+                  >
+                  <input
+                    type="text"
+                    class="input-field"
+                    placeholder="Opcional"
+                    name="complemento"
+                    id="input-complemento"
+                    maxlength="60"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Observações -->
         <div class="section">
-          <h2 class="section-title">Observações</h2>
-          <textarea
-            class="input-field"
-            name="observacoes"
-            id="observacoes"
-            placeholder="Ex: sem cebola, pouco sal, molho à parte..."
-          ></textarea>
+          <div class="field">
+            <label class="section-title" for="observacoes">Observações</label>
+            <textarea
+              class="input-field"
+              name="observacoes"
+              id="observacoes"
+              maxlength="300"
+              placeholder="Ex: sem cebola, pouco sal, molho à parte..."
+              aria-describedby="contador-observacoes"
+            ></textarea>
+            <p class="field-hint field-contador" id="contador-observacoes">
+              0/300
+            </p>
+          </div>
         </div>
 
         <div class="divider"></div>
@@ -521,8 +726,12 @@
           <button type="button" class="btn btn-cancel" id="btn-cancelar">
             Voltar
           </button>
-          <button type="submit" class="btn btn-submit">Enviar Pedido</button>
+          <button type="submit" class="btn btn-submit">
+            Ir para o pagamento
+          </button>
         </div>
+
+        <p class="form-nota">Seus dados são usados somente para este pedido.</p>
       </form>
     </div>
 
