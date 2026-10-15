@@ -433,7 +433,7 @@
         novalidate
       >
         <div class="form-header">
-          <div class="marmita-tittle" id="form-titulo">Finalizar Pedido</div>
+          <div class="marmita-title" id="form-titulo">Finalizar Pedido</div>
           <p id="form-descricao">
             Confira os itens e preencha seus dados para continuar
           </p>
@@ -441,7 +441,7 @@
 
         <!-- Resumo do carrinho -->
         <div class="section">
-          <div class="section-tittle" id="rotulo-itens">Seus Itens</div>
+          <div class="section-title" id="rotulo-itens">Seus Itens</div>
           <div
             class="resumo-carrinho"
             id="resumo-carrinho-form"
@@ -452,7 +452,7 @@
         <!-- Nome -->
         <div class="section">
           <div class="field">
-            <label class="section-tittle" for="input-nome">Seu Nome</label>
+            <label class="section-title" for="input-nome">Seu Nome</label>
             <input
               type="text"
               class="input-field input-nome"
@@ -471,7 +471,7 @@
         <!-- E-mail -->
         <div class="section">
           <div class="field">
-            <label class="section-tittle" for="input-email">Seu E-mail</label>
+            <label class="section-title" for="input-email">Seu E-mail</label>
             <input
               type="email"
               class="input-field input-nome"
@@ -493,7 +493,7 @@
         <!-- Telefone -->
         <div class="section">
           <div class="field field-telefone">
-            <label class="section-tittle" for="input-telefone"
+            <label class="section-title" for="input-telefone"
               >Seu Telefone</label
             >
             <div class="telefone-wrap">
@@ -539,7 +539,7 @@
               </span>
             </div>
             <p class="field-hint" id="dica-telefone">
-              Celular com DDD. O código do país (+55) já está incluído.
+              O código do país (+55) já está incluído.
             </p>
             <p class="field-error" id="erro-telefone" aria-live="polite"></p>
           </div>
@@ -735,11 +735,6 @@
       </form>
     </div>
 
-    <script src="/Services/Carrinho.js"></script>
-    <script src="/Services/Sistema.js"></script>
-    <script src="/Services/cardapio.js"></script>
-    <script src="/Services/avaliacoes.js"></script>
-    <script src="/Services/form.js"></script>
-    <script src="/Services/API.js"></script>
+    <script type="module" src="/Services/main.js"></script>
   </body>
 </html>

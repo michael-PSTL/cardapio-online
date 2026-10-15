@@ -20,7 +20,7 @@
 
 .cart-btn:hover {
   border-color: var(--border-hover);
-  background: rgba(255,107,0,0.05);
+  background: rgba(var(--primary-rgb),0.05);
 }
 
 .cart-icon { width: 20px; height: 20px; color: var(--text); }
@@ -68,7 +68,7 @@
   text-align: left;
 
   box-shadow:
-    0 10px 30px rgba(255, 107, 0, 0.35),
+    0 10px 30px rgba(var(--primary-rgb), 0.35),
     0 4px 12px rgba(0, 0, 0, 0.45);
 
   /* escondido enquanto o carrinho estiver vazio */
@@ -97,7 +97,7 @@
 .fab-finalizar:hover {
   background: var(--primary-light);
   box-shadow:
-    0 14px 38px rgba(255, 107, 0, 0.45),
+    0 14px 38px rgba(var(--primary-rgb), 0.45),
     0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
@@ -326,7 +326,7 @@ body.com-fab { padding-bottom: 96px; }
   transition: color 0.2s;
 }
 
-.carrinho-item-remover:hover { color: #e04b3f; }
+.carrinho-item-remover:hover { color: var(--danger); }
 
 .carrinho-footer {
   padding: 18px 20px calc(22px + env(safe-area-inset-bottom, 0px));
@@ -374,9 +374,6 @@ body.com-fab { padding-bottom: 96px; }
 }
 
 .resumo-item .resumo-qtd { color: var(--text-muted); margin-right: 6px; }
-
-/* ─── FEEDBACK "ADICIONADO" NO BOTÃO ─── */
-.Comprar.added { background: #2e8b57; }
 
 /* ─── RESPONSIVO ─── */
 @media (max-width: 768px) {

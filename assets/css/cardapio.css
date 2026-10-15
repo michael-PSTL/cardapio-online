@@ -353,7 +353,7 @@
   transform: translateY(-1px);
 
   box-shadow:
-    0 6px 20px rgba(255, 107, 0, 0.35);
+    0 6px 20px rgba(var(--primary-rgb), 0.35);
 }
 
 .Comprar:active {
@@ -361,7 +361,7 @@
 }
 
 .Comprar.added {
-  background: #2e8b57;
+  background: var(--success);
 }
 
 .Comprar.added::before {
