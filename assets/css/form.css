@@ -13,7 +13,7 @@
 
 form#pedido-form {
   background: var(--bg-card);
-  border: 1px solid rgba(var(--primary-rgb),0.15);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
   padding: 32px;
   width: 100%;

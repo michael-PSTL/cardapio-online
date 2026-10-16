@@ -6,16 +6,19 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>Restaurante</title>
+    <title>Restaurante — Comida caseira feita com carinho</title>
+    <meta name="description" content="Marmitas, bebidas e porções caseiras. Veja o cardápio, monte seu pedido e receba em casa ou retire na loja." />
+    <meta name="theme-color" content="#080706" />
     <link rel="icon" href="/assets/img/restaurante.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
     <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/hero.css" />
     <link rel="stylesheet" href="/assets/css/cardapio.css" />
     <link rel="stylesheet" href="/assets/css/avaliacoes.css" />
     <link rel="stylesheet" href="/assets/css/informacoes.css" />
@@ -25,9 +28,10 @@
   <body>
     <header class="menu">
       <div class="menu-BOX">
-        <h1 class="menu-TITULO">Restaurante</h1>
+        <a class="menu-TITULO" href="#Inicio">Restaurante</a>
         <nav class="navegacao">
           <ul>
+            <li><a href="#Inicio" class="nav">Início</a></li>
             <li><a href="#Cardapio" class="nav">Cardápio</a></li>
             <li><a href="#Avaliacoes" class="nav">Avaliações</a></li>
             <li><a href="#Localizacao" class="nav">Localização</a></li>
@@ -61,6 +65,7 @@
       </div>
 
       <nav class="nav2" id="nav2">
+        <a href="#Inicio" class="nav2N">Início</a>
         <a href="#Cardapio" class="nav2N">Cardápio</a>
         <a href="#Avaliacoes" class="nav2N">Avaliações</a>
         <a href="#Localizacao" class="nav2N">Localização</a>
@@ -68,11 +73,125 @@
       </nav>
     </header>
 
+    <!-- ─── HERO ─── -->
+    <section class="HERO" id="Inicio" aria-labelledby="hero-titulo">
+      <div class="hero-BOX">
+        <div class="hero-conteudo">
+          <span class="section-eyebrow section-eyebrow--esq">Comida caseira</span>
+
+          <h1 class="hero-titulo" id="hero-titulo">
+            Sabor de casa,<br />
+            <i>feito com carinho</i>
+          </h1>
+
+          <p class="hero-texto">
+            Marmitas, bebidas e porções preparadas todos os dias para você e
+            sua família. Monte seu pedido pelo site e receba em casa ou retire
+            na loja.
+          </p>
+
+          <a class="hero-link" href="#Cardapio">
+            Ver cardápio
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </a>
+
+          <ul class="hero-destaques">
+            <li class="hero-destaque">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+              <div>
+                <strong>Comida caseira</strong>
+                <span>Feita com carinho</span>
+              </div>
+            </li>
+            <li class="hero-destaque">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+              <div>
+                <strong>Entrega ou retirada</strong>
+                <span>Você escolhe</span>
+              </div>
+            </li>
+            <li class="hero-destaque">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <div>
+                <strong>Pedido online</strong>
+                <span>Rápido, pelo site</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-prato">
+            <img
+              src="/assets/img/imagem-marmita.avif"
+              alt="Marmita caseira com carne grelhada, linguiça, tomate, cenoura e arroz"
+              width="740"
+              height="493"
+              fetchpriority="high"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ─── CARDÁPIO ─── -->
     <section class="CARDAPIO" id="Cardapio">
       <main class="cardapio-BOX">
         <div class="section-header">
+          <span class="section-eyebrow">Escolha seu prato</span>
           <h2 class="cardapio-TITULO">Nosso <i>Cardápio</i></h2>
+          <p class="section-subtitle">
+            Marmitas, bebidas e porções preparadas todos os dias. Adicione ao
+            carrinho e finalize seu pedido em poucos passos.
+          </p>
         </div>
 
         <div class="cardapio-categoria">
@@ -144,7 +263,9 @@
     <section class="AVALIACOES" id="Avaliacoes">
       <div class="avaliacoes-BOX">
         <div class="section-header">
+          <span class="section-eyebrow">Depoimentos</span>
           <h2 class="avaliacoes-TITULO">O que dizem <i>nossos clientes</i></h2>
+          <p class="section-subtitle">Opiniões de quem já pediu com a gente.</p>
         </div>
         <div class="avaliacoes-resumo" id="avaliacoes-resumo">
           <!-- Resumo (média + total) renderizado pelo avaliacoes.js -->
@@ -159,7 +280,12 @@
     <section class="LOCALIZACAO" id="Localizacao">
       <div class="localizacao-wrapper">
         <div class="section-header">
+          <span class="section-eyebrow">Venha nos visitar</span>
           <h2 class="localizacao-TITULO">Nossa <i>Localização</i></h2>
+          <p class="section-subtitle">
+            Estamos em São José de Ribamar. Confira o horário de funcionamento
+            e veja como chegar.
+          </p>
         </div>
 
         <div class="localizacao-BOX">
@@ -313,37 +439,39 @@
           <div class="contato-col">
             <h4 class="contato-col-titulo">Fale Conosco</h4>
             <div class="contato-BOX">
-              <a href="#" class="app-image">
-                <svg
-                  class="image-contato"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
+              <a
+                href="https://instagram.com/mik.devcode"
+                class="app-image"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram (abre em nova aba)"
+                title="Instagram"
+              >
+                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
                   <use href="/assets/SVGs/mdi--instagram.svg#instagram"></use>
                 </svg>
-                <i>@mik.devcode</i>
               </a>
-              <a href="#" class="app-image">
-                <svg
-                  class="image-contato"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <use
-                    href="/assets/SVGs/ic--baseline-whatsapp.svg#whatsapp"
-                  ></use>
+              <a
+                href="https://wa.me/5598984975025"
+                class="app-image"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp (abre em nova aba)"
+                title="WhatsApp"
+              >
+                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <use href="/assets/SVGs/ic--baseline-whatsapp.svg#whatsapp"></use>
                 </svg>
-                <i>+55 (98) 98497-5025</i>
               </a>
-              <a href="#" class="app-image">
-                <svg
-                  class="image-contato"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
+              <a
+                href="mailto:michael.s11.soares@gmail.com"
+                class="app-image"
+                aria-label="Enviar e-mail"
+                title="E-mail"
+              >
+                <svg class="image-contato" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
                   <use href="/assets/SVGs/ic--baseline-email.svg#email"></use>
                 </svg>
-                <i>michael.s11.soares@gmail.com</i>
               </a>
             </div>
           </div>

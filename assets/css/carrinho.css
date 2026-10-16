@@ -8,9 +8,11 @@
 .cart-btn {
   position: relative;
   background: transparent;
-  border: 1.5px solid var(--text-faint);
-  border-radius: var(--radius-sm);
-  padding: 9px;
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  padding: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -19,8 +21,8 @@
 }
 
 .cart-btn:hover {
-  border-color: var(--border-hover);
-  background: rgba(var(--primary-rgb),0.05);
+  border-color: var(--card-border-hover);
+  background: rgba(var(--primary-rgb),0.12);
 }
 
 .cart-icon { width: 20px; height: 20px; color: var(--text); }
