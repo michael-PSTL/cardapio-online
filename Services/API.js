@@ -10,6 +10,7 @@
 // objeto simples (ver "FORMATO DE ENTRADA" mais abaixo).
 // ═══════════════════════════════════════════════════════════
 
+import { latitudeValida, longitudeValida } from "./core/coordenadas.js";
 import { normalizarEspacos, somenteDigitos } from "./core/formatadores.js";
 
 // ┌─────────────────────────────────────────────────────────┐
@@ -17,30 +18,50 @@ import { normalizarEspacos, somenteDigitos } from "./core/formatadores.js";
 // └─────────────────────────────────────────────────────────┘
 export const API_CONFIG = {
   lanchoneteId: "lanchonete-01",
-  // URL que recebe o POST do pedido. Pode ser relativa ("/api/pedidos")
-  // ou absoluta ("https://api.seudominio.com/pedidos").
-  endpoint: "/api/pedidos",
+  // URL que recebe o POST do pedido. Pode ser relativa ("/pedido")
+  // ou absoluta ("https://api.seudominio.com/pedido").
+  endpoint: "/pedido",
   timeoutMs: 15000,
+  // DDI enviado antes do telefone (o formulário já guarda só DDD + número).
+  codigoPais: "55",
+  // false → latitude/longitude são opcionais (vão como null se o cliente não
+  //         usar a localização atual).
+  // true  → entrega exige a localização (o formulário bloqueia sem ela).
+  coordenadasObrigatorias: false,
 };
 
 // ┌─────────────────────────────────────────────────────────┐
 // │ 🔧 CONFIGURAÇÃO — FORMA DE PAGAMENTO                      │
 // │                                                           │
-// │ `padrao`  → chave usada no campo "formaPagamento" do JSON.│
-// │ `opcoes`  → todas as formas conhecidas. Só as com         │
-// │             `ativo: true` podem ser enviadas. Para trocar,│
-// │             mude `padrao` para outra chave ativa.         │
-// │ As chaves são exatamente o texto enviado ao back-end.     │
+// │ As chaves são EXATAMENTE os valores do enum FormaPagamento│
+// │ do back-end (com.api.clientPayment.enums). O texto da     │
+// │ chave é o que vai no campo "formaPagamento" do JSON.      │
+// │                                                           │
+// │ `rotulo` → texto mostrado ao cliente.                     │
+// │ `ativo`  → false esconde a opção do formulário e impede   │
+// │            o envio (útil para desligar um meio de pagar). │
 // └─────────────────────────────────────────────────────────┘
 export const FORMAS_PAGAMENTO = {
-  padrao: "CREDITO_MAQUININHA",
   opcoes: {
-    CREDITO_MAQUININHA: { rotulo: "Cartão de crédito (maquininha)", ativo: true },
-    DEBITO_MAQUININHA: { rotulo: "Cartão de débito (maquininha)", ativo: false },
-    PIX: { rotulo: "Pix", ativo: false },
-    DINHEIRO: { rotulo: "Dinheiro", ativo: false },
+    DINHEIRO: { rotulo: "Dinheiro", ativo: true },
+    PIX_ONLINE: { rotulo: "Pix online", ativo: true },
+    PIX_PRESENCIAL: { rotulo: "Pix presencial", ativo: true },
+    CREDITO_ONLINE: { rotulo: "Crédito online", ativo: true },
+    CREDITO_PRESENCIAL: { rotulo: "Crédito presencial", ativo: true },
+    DEBITO_ONLINE: { rotulo: "Débito online", ativo: true },
+    DEBITO_PRESENCIAL: { rotulo: "Débito presencial", ativo: true },
   },
 };
+
+/** true se a chave existe no enum e está ativa. */
+export function formaPagamentoAtiva(chave) {
+  return Object.hasOwn(FORMAS_PAGAMENTO.opcoes, chave) && FORMAS_PAGAMENTO.opcoes[chave].ativo === true;
+}
+
+/** Texto para o cliente ("Pix online"); devolve a própria chave se desconhecida. */
+export function rotuloFormaPagamento(chave) {
+  return Object.hasOwn(FORMAS_PAGAMENTO.opcoes, chave) ? FORMAS_PAGAMENTO.opcoes[chave].rotulo : String(chave ?? "");
+}
 
 // ┌─────────────────────────────────────────────────────────┐
 // │ 🔧 CONFIGURAÇÃO — TIPO DE RECEBIMENTO                     │
@@ -81,8 +102,9 @@ export class ErroApi extends Error {
 //   nome, email, telefone,            // telefone: com ou sem máscara
 //   tipoRecebimento,                  // "entrega" | "buscar"
 //   observacao,                       // opcional
-//   formaPagamento,                   // opcional; padrão = FORMAS_PAGAMENTO.padrao
-//   endereco: { rua, numero, bairro, cidade, complemento, cep },  // só entrega
+//   formaPagamento,                   // obrigatório; chave de FORMAS_PAGAMENTO
+//   endereco: { rua, numero, bairro, cidade, complemento, cep,
+//               latitude, longitude },  // só entrega; lat/lng opcionais (ver API_CONFIG)
 //   itens: [{ id, quantidade }]       // id = id do produto no cardápio
 // }
 // ═══════════════════════════════════════════════════════════
@@ -96,13 +118,10 @@ function exigir(condicao, mensagem) {
 }
 
 function resolverFormaPagamento(escolhida) {
-  const chave = escolhida ?? FORMAS_PAGAMENTO.padrao;
-  const opcao = FORMAS_PAGAMENTO.opcoes[chave];
+  const chave = texto(escolhida);
 
-  exigir(
-    opcao?.ativo === true,
-    `Forma de pagamento "${chave}" não está ativa. Ajuste FORMAS_PAGAMENTO em API.js.`,
-  );
+  exigir(chave, "Escolha a forma de pagamento.");
+  exigir(formaPagamentoAtiva(chave), `Forma de pagamento "${chave}" não está disponível. Escolha outra.`);
 
   return chave;
 }
@@ -113,15 +132,44 @@ function resolverTipoRecebimento(tipo) {
   return tipoApi;
 }
 
+function semValor(valor) {
+  return valor === null || valor === undefined || valor === "";
+}
+
+/** Latitude e longitude andam juntas: ou as duas válidas, ou as duas null. */
+function resolverCoordenadas(origem) {
+  const semLatitude = semValor(origem.latitude);
+  const semLongitude = semValor(origem.longitude);
+
+  if (semLatitude && semLongitude) {
+    exigir(
+      !API_CONFIG.coordenadasObrigatorias,
+      "Use sua localização atual para informar latitude e longitude.",
+    );
+    return { latitude: null, longitude: null };
+  }
+
+  exigir(!semLatitude && !semLongitude, "Localização incompleta: informe latitude e longitude.");
+
+  const latitude = Number(origem.latitude);
+  const longitude = Number(origem.longitude);
+
+  exigir(latitudeValida(latitude), "Latitude inválida.");
+  exigir(longitudeValida(longitude), "Longitude inválida.");
+
+  return { latitude, longitude };
+}
+
 function montarEndereco(endereco) {
   const origem = endereco ?? {};
   const resultado = {
+    cidade: texto(origem.cidade),
+    bairro: texto(origem.bairro),
     rua: texto(origem.rua),
     numero: texto(origem.numero),
-    bairro: texto(origem.bairro),
-    cidade: texto(origem.cidade),
     complemento: texto(origem.complemento),
     cep: somenteDigitos(origem.cep),
+    ...resolverCoordenadas(origem),
   };
 
   exigir(resultado.rua, "Informe a rua.");
@@ -173,7 +221,7 @@ export function montarPayload(pedido) {
   return {
     lanchoneteId: texto(API_CONFIG.lanchoneteId),
     nomeCliente,
-    telefoneCliente,
+    telefoneCliente: `${somenteDigitos(API_CONFIG.codigoPais)}${telefoneCliente}`,
     emailCliente,
     formaPagamento: resolverFormaPagamento(pedido.formaPagamento),
     tipoRecebimento: resolverTipoRecebimento(pedido.tipoRecebimento),

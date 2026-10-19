@@ -561,6 +561,7 @@
         novalidate
       >
         <div class="form-header">
+          <span class="form-etapa">Etapa 1 de 2</span>
           <div class="marmita-title" id="form-titulo">Finalizar Pedido</div>
           <p id="form-descricao">
             Confira os itens e preencha seus dados para continuar
@@ -817,6 +818,55 @@
                     maxlength="60"
                   />
                 </div>
+
+                <!-- Localização atual (latitude/longitude enviadas ao back-end) -->
+                <div class="field span-2 localizacao">
+                  <span class="field-label" id="rotulo-localizacao"
+                    >Localização exata</span
+                  >
+                  <button
+                    type="button"
+                    class="btn-localizacao"
+                    id="btn-localizacao"
+                    aria-describedby="status-localizacao erro-localizacao"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
+                      <circle cx="12" cy="12" r="7.5"></circle>
+                    </svg>
+                    <span class="btn-localizacao-texto"
+                      >Usar minha localização atual</span
+                    >
+                  </button>
+                  <p
+                    class="field-hint"
+                    id="status-localizacao"
+                    aria-live="polite"
+                  ></p>
+                  <p
+                    class="field-error"
+                    id="erro-localizacao"
+                    aria-live="polite"
+                  ></p>
+                  <button
+                    type="button"
+                    class="btn-link"
+                    id="btn-limpar-localizacao"
+                    hidden
+                  >
+                    Remover localização
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -860,6 +910,79 @@
         </div>
 
         <p class="form-nota">Seus dados são usados somente para este pedido.</p>
+      </form>
+
+      <!-- Etapa 2: forma de pagamento (o POST do pedido só acontece aqui) -->
+      <form
+        class="pedido-form"
+        id="pagamento-form"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pagamento-titulo"
+        aria-describedby="pagamento-descricao"
+        tabindex="-1"
+        novalidate
+        hidden
+      >
+        <div class="form-header">
+          <span class="form-etapa">Etapa 2 de 2</span>
+          <div class="marmita-title" id="pagamento-titulo">
+            Forma de pagamento
+          </div>
+          <p id="pagamento-descricao">
+            Escolha como você prefere pagar este pedido
+          </p>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title" id="rotulo-metodo">Como você quer pagar?</h2>
+          <div
+            class="radio-group pagamento-grade"
+            id="pagamento-metodos"
+            role="radiogroup"
+            aria-labelledby="rotulo-metodo"
+            aria-describedby="erro-pagamento"
+          ></div>
+          <p class="field-error" id="erro-pagamento" aria-live="polite"></p>
+        </div>
+
+        <div class="section" id="pagamento-momentos-secao" hidden>
+          <h2 class="section-title" id="rotulo-momento">Quando você paga?</h2>
+          <div
+            class="radio-group"
+            id="pagamento-momentos"
+            role="radiogroup"
+            aria-labelledby="rotulo-momento"
+            aria-describedby="erro-momento"
+          ></div>
+          <p class="field-error" id="erro-momento" aria-live="polite"></p>
+        </div>
+
+        <p class="pagamento-nota" id="pagamento-nota" hidden></p>
+
+        <div class="divider"></div>
+
+        <div class="total-display">
+          <span class="total-label">Total do Pedido</span>
+          <span class="total-value" id="pagamento-total-valor">R$ 0,00</span>
+          <div class="total-breakdown" id="pagamento-total-breakdown"></div>
+          <p class="pagamento-escolha" id="pagamento-escolha" aria-live="polite"></p>
+        </div>
+
+        <p class="field-error" id="erro-envio" role="alert"></p>
+
+        <div class="form-footer">
+          <button type="button" class="btn btn-cancel" id="btn-voltar-dados">
+            Voltar
+          </button>
+          <button type="submit" class="btn btn-submit" id="btn-confirmar-pedido">
+            Confirmar pedido
+          </button>
+        </div>
+
+        <p class="form-nota">
+          Você pode voltar e corrigir seus dados antes de confirmar.
+        </p>
       </form>
     </div>
 

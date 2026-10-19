@@ -11,7 +11,7 @@
   display: none;
 }
 
-form#pedido-form {
+form.pedido-form {
   background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
@@ -28,11 +28,22 @@ form#pedido-form {
   box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 60px rgba(var(--primary-rgb),0.05);
 }
 
-form#pedido-form:focus { outline: none; }
+form.pedido-form:focus { outline: none; }
 
-form#pedido-form::-webkit-scrollbar { width: 3px; }
-form#pedido-form::-webkit-scrollbar-track { background: transparent; }
-form#pedido-form::-webkit-scrollbar-thumb {
+/* a etapa inativa fica oculta (os dados continuam no DOM) */
+form.pedido-form[hidden] { display: none; }
+
+/* entrada suave ao trocar de etapa (só opacidade: o transform centraliza o modal) */
+form.pedido-form:not([hidden]) { animation: form-etapa-entrada 0.25s ease-out; }
+
+@keyframes form-etapa-entrada {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+form.pedido-form::-webkit-scrollbar { width: 3px; }
+form.pedido-form::-webkit-scrollbar-track { background: transparent; }
+form.pedido-form::-webkit-scrollbar-thumb {
   background: var(--primary);
   border-radius: 10px;
 }
@@ -42,6 +53,16 @@ form#pedido-form::-webkit-scrollbar-thumb {
   margin-bottom: 26px;
   padding-bottom: 18px;
   border-bottom: 1px solid var(--text-faint);
+}
+
+.form-etapa {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .marmita-title {
@@ -112,6 +133,7 @@ form#pedido-form::-webkit-scrollbar-thumb {
 
 .field-hint[data-estado="ok"] { color: var(--success-text); }
 .field-hint[data-estado="aviso"] { color: var(--warning); }
+.field-hint[data-estado="erro"] { color: var(--danger-text); font-weight: 500; }
 
 .field-hint[data-estado="carregando"]::before {
   content: "";
@@ -228,6 +250,127 @@ form#pedido-form::-webkit-scrollbar-thumb {
 }
 
 .radio-option input:checked + .radio-label .name { color: var(--primary); }
+
+/* ─── PAGAMENTO (etapa 2) ─── */
+.pagamento-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pagamento-grade .radio-option { min-width: 0; }
+
+.pagamento-label {
+  gap: 2px;
+  min-height: 104px;
+  padding: 16px 10px;
+}
+
+.pagamento-icone {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.pagamento-icone svg { width: 100%; height: 100%; }
+
+.radio-option input:checked + .pagamento-label .pagamento-icone { color: var(--primary); }
+
+.radio-label .hint {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+.radio-option input:checked + .radio-label .hint { color: var(--text); }
+
+.pagamento-nota {
+  margin: -6px 0 6px;
+  padding: 12px 14px;
+  background: rgba(var(--primary-rgb),0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.pagamento-nota[hidden] { display: none; }
+
+.pagamento-escolha {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--success-text);
+  text-align: center;
+}
+
+.pagamento-escolha:not(:empty) { margin-top: 10px; }
+
+#erro-envio:not(:empty) { margin-bottom: 12px; }
+
+/* ─── LOCALIZAÇÃO ATUAL ─── */
+.localizacao { display: flex; flex-direction: column; }
+
+.btn-localizacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px;
+  background: var(--bg-raised);
+  border: 1.5px dashed rgba(var(--primary-rgb),0.5);
+  border-radius: var(--radius-sm);
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-localizacao svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.btn-localizacao:hover:not(:disabled) {
+  background: rgba(var(--primary-rgb),0.07);
+  border-style: solid;
+}
+
+.btn-localizacao:disabled { opacity: 0.75; cursor: progress; }
+
+.btn-localizacao[aria-busy="true"] svg { animation: form-giro 1.2s linear infinite; }
+
+.btn-localizacao.capturada {
+  border-style: solid;
+  border-color: rgba(62,207,142,0.55);
+  color: var(--success-text);
+}
+
+.btn-localizacao[aria-invalid="true"] { border-color: var(--danger-text); }
+
+.localizacao .field-hint { margin-top: 8px; }
+
+.btn-link {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-link:hover { color: var(--text); }
+.btn-link[hidden] { display: none; }
 
 /* ─── ENDEREÇO (abre/fecha sem depender de altura fixa) ─── */
 .endereco-container {
@@ -490,8 +633,9 @@ textarea.input-field {
 
 /* ─── ACESSIBILIDADE: MOVIMENTO REDUZIDO ─── */
 @media (prefers-reduced-motion: reduce) {
-  form#pedido-form *,
-  form#pedido-form *::before {
+  form.pedido-form,
+  form.pedido-form *,
+  form.pedido-form *::before {
     transition: none !important;
     animation: none !important;
   }
@@ -499,7 +643,7 @@ textarea.input-field {
 
 /* ─── RESPONSIVO ─── */
 @media (max-width: 520px) {
-  form#pedido-form {
+  form.pedido-form {
     max-width: calc(100vw - 24px);
     padding: 24px 18px;
     border-radius: var(--radius-lg);
@@ -508,7 +652,7 @@ textarea.input-field {
 }
 
 @media (max-width: 480px) {
-  form#pedido-form {
+  form.pedido-form {
     padding: 22px 16px;
     max-height: 95vh;
     border-radius: var(--radius-lg);
@@ -524,6 +668,7 @@ textarea.input-field {
   }
 
   .radio-option { min-width: 100%; }
+  .pagamento-grade .radio-option { min-width: 0; }
 
   .total-value { font-size: 1.85rem; }
 

@@ -1,5 +1,6 @@
 // Mensagem e link de WhatsApp do pedido. Funções puras (sem DOM, sem rede).
 
+import { latitudeValida, longitudeValida } from "../core/coordenadas.js";
 import { formatarMoeda } from "../core/formatadores.js";
 import { aplicarMascaraCep, aplicarMascaraTelefone } from "../core/mascaras.js";
 
@@ -19,7 +20,7 @@ const CODIGO_PAIS = "+55";
 const ROTULO_RECEBIMENTO = { entrega: "Entrega", buscar: "Retirada no local" };
 
 /**
- * @param {object} pedido  { nome, email, telefone (dígitos), recebimento, endereco, observacao, itens, total }
+ * @param {object} pedido  { nome, email, telefone (dígitos), recebimento, endereco, pagamento (texto), observacao, itens, total }
  */
 export function montarMensagemWhatsapp(pedido) {
   const itensTexto = pedido.itens
@@ -28,7 +29,8 @@ export function montarMensagemWhatsapp(pedido) {
 
   let enderecoTexto = "";
   if (pedido.recebimento === "entrega") {
-    const { cep, cidade, bairro, rua, numero, complemento } = pedido.endereco;
+    const { cep, cidade, bairro, rua, numero, complemento, latitude, longitude } = pedido.endereco;
+    const temLocalizacao = latitudeValida(latitude) && longitudeValida(longitude);
     enderecoTexto =
       `\n📍 Endereço:\n` +
       `   CEP: ${aplicarMascaraCep(cep) || "Não informado"}\n` +
@@ -36,7 +38,8 @@ export function montarMensagemWhatsapp(pedido) {
       `   Bairro: ${bairro}\n` +
       `   Rua: ${rua}\n` +
       `   Número: ${numero}\n` +
-      `   Complemento: ${complemento || "Não informado"}`;
+      `   Complemento: ${complemento || "Não informado"}` +
+      (temLocalizacao ? `\n   Localização: https://www.google.com/maps?q=${latitude},${longitude}` : "");
   }
 
   return (
@@ -47,6 +50,7 @@ export function montarMensagemWhatsapp(pedido) {
     `🍱 Itens:\n${itensTexto}\n\n` +
     `📦 Recebimento: ${ROTULO_RECEBIMENTO[pedido.recebimento] ?? "Não informado"}` +
     `${enderecoTexto}\n\n` +
+    `💳 Pagamento: ${pedido.pagamento || "Não informado"}\n` +
     `📝 Observações: ${pedido.observacao || "Nenhuma"}\n` +
     `💰 Total: ${formatarMoeda(pedido.total)}`
   );

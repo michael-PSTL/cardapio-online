@@ -1,9 +1,13 @@
-// Formulário de pedido (interface): abrir/fechar, campos, validação visual,
-// CEP, frete/total e envio. As regras vivem em módulos próprios:
+// Formulário de pedido (interface) em DUAS etapas dentro do mesmo modal:
+//   1. dados  → nome, contato, recebimento/endereço (+ localização atual)
+//   2. pagamento → forma de pagamento; só aqui o pedido é enviado (POST).
+// Este módulo orquestra: abrir/fechar, etapas, campos, CEP, frete/total e envio.
+// As regras vivem em módulos próprios:
 //   validacao.js (regras) · viaCep.js (rede) · API.js (envio do pedido)
+//   formularioPagamento.js (tela da etapa 2) · seletorLocalizacao.js (lat/lng)
 //   mensagemWhatsapp.js (texto do WhatsApp) · carrinhoStore.js (itens)
 
-import { enviarPedido, ErroApi, ErroPedido } from "../API.js";
+import { API_CONFIG, enviarPedido, ErroApi, ErroPedido, rotuloFormaPagamento } from "../API.js";
 import { ativarArmadilhaFoco } from "../core/armadilhaFoco.js";
 import { formatarMoeda, escaparHtml, normalizarEspacos, somenteDigitos } from "../core/formatadores.js";
 import {
@@ -15,6 +19,8 @@ import { travarScroll, destravarScroll } from "../core/scroll.js";
 import * as carrinho from "../carrinho/carrinhoStore.js";
 import { mostrarAviso } from "../ui/aviso.js";
 import { consultarCep } from "./viaCep.js";
+import { iniciarFormularioPagamento } from "./formularioPagamento.js";
+import { iniciarSeletorLocalizacao } from "./seletorLocalizacao.js";
 import { WHATSAPP_CONFIG, montarMensagemWhatsapp, montarUrlWhatsapp } from "./mensagemWhatsapp.js";
 import {
   validarCep,
@@ -27,7 +33,8 @@ import {
 
 const DONO_SCROLL = "formulario";
 const LIMITE_OBSERVACOES = 300;
-const TEXTO_BOTAO_ENVIANDO = "Enviando…";
+const ETAPA_DADOS = "dados";
+const ETAPA_PAGAMENTO = "pagamento";
 
 /** @returns {{ abrir: () => void } | null} */
 export function iniciarFormularioPedido() {
@@ -45,7 +52,7 @@ export function iniciarFormularioPedido() {
   const totalValor = $("total-valor");
   const totalBreakdown = $("total-breakdown");
   const btnCancelar = $("btn-cancelar");
-  const btnEnviar = form.querySelector('button[type="submit"]');
+  const btnContinuar = form.querySelector('button[type="submit"]');
   const resumoCarrinhoForm = $("resumo-carrinho-form");
   const inputTelefone = $("input-telefone");
   const inputCep = $("input-cep");
@@ -55,15 +62,27 @@ export function iniciarFormularioPedido() {
   const contadorObservacoes = $("contador-observacoes");
   const grupoRecebimento = form.querySelector('[role="radiogroup"]');
   const erroRecebimento = $("erro-recebimento");
-  const textoBotaoOriginal = btnEnviar?.textContent.trim() ?? "";
 
-  // Mensagem de erro do envio (criada por JS: o HTML não precisa mudar).
-  const erroEnvio = document.createElement("p");
-  erroEnvio.className = "field-error";
-  erroEnvio.id = "erro-envio";
-  erroEnvio.setAttribute("role", "alert");
-  form.querySelector(".form-footer")?.before(erroEnvio);
+  // Etapa 2 (pagamento): tela própria; o envio continua sendo feito aqui.
+  const pagamento = iniciarFormularioPagamento({
+    aoVoltar: voltarParaDados,
+    aoConfirmar: confirmarPedido,
+  });
 
+  if (!pagamento) {
+    console.warn("[formularioPedido] Etapa de pagamento ausente: formulário desativado.");
+    return null;
+  }
+
+  const seletorLocalizacao = iniciarSeletorLocalizacao({
+    botao: $("btn-localizacao"),
+    botaoLimpar: $("btn-limpar-localizacao"),
+    status: $("status-localizacao"),
+    erro: $("erro-localizacao"),
+    obrigatoria: API_CONFIG.coordenadasObrigatorias,
+  });
+
+  let etapa = ETAPA_DADOS;
   let frete = 0;
   let ultimoFoco = null;
   let enviando = false;
@@ -72,6 +91,7 @@ export function iniciarFormularioPedido() {
   let cepRequisicaoId = 0;
 
   const estaAberto = () => overlay.style.display === "block";
+  const estaNaEtapa = (nome) => estaAberto() && etapa === nome;
   const entregaSelecionada = () => form.elements.recebimento?.value === "entrega";
 
   // ═══════════════════════════════════════════════════════════
@@ -139,6 +159,8 @@ export function iniciarFormularioPedido() {
     });
 
     if (validarRecebimento()) invalidos.push($("recebimento-entrega"));
+
+    if (entregaSelecionada() && seletorLocalizacao.validar()) invalidos.push($("btn-localizacao"));
 
     // Foca o primeiro campo inválido na ordem em que aparece na tela.
     invalidos.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
@@ -332,6 +354,7 @@ export function iniciarFormularioPedido() {
         });
       cancelarBuscaCep();
       definirStatusCep("");
+      seletorLocalizacao.limpar();
     }
   }
 
@@ -348,20 +371,44 @@ export function iniciarFormularioPedido() {
   // ABRIR / FECHAR
   // ═══════════════════════════════════════════════════════════
 
-  function mostrarErroEnvio(mensagem) {
-    erroEnvio.textContent = mensagem;
-    if (mensagem) erroEnvio.style.marginBottom = "12px";
-    else erroEnvio.style.removeProperty("margin-bottom");
-  }
-
   function definirEnviando(ativo) {
     enviando = ativo;
-    form.setAttribute("aria-busy", String(ativo));
+    pagamento.definirEnviando(ativo);
+  }
 
-    if (btnEnviar) {
-      btnEnviar.disabled = ativo;
-      btnEnviar.textContent = ativo ? TEXTO_BOTAO_ENVIANDO : textoBotaoOriginal;
-    }
+  // ═══════════════════════════════════════════════════════════
+  // ETAPAS (dados → pagamento)
+  // ═══════════════════════════════════════════════════════════
+
+  function mostrarEtapa(nova, { foco } = {}) {
+    etapa = nova;
+
+    const noPagamento = nova === ETAPA_PAGAMENTO;
+    form.hidden = noPagamento;
+    pagamento.elemento.hidden = !noPagamento;
+
+    const alvo = noPagamento ? pagamento.elemento : form;
+    alvo.scrollTop = 0;
+
+    // Foca o diálogo (e não o primeiro campo) para não abrir o teclado no celular.
+    requestAnimationFrame(() => (foco ?? alvo).focus({ preventScroll: true }));
+  }
+
+  function irParaPagamento() {
+    const subtotal = carrinho.getSubtotal();
+    const total = calcularTotal();
+
+    pagamento.mostrarErroEnvio("");
+    pagamento.preparar({ entrega: entregaSelecionada(), subtotal, frete, total });
+    mostrarEtapa(ETAPA_PAGAMENTO);
+  }
+
+  // Volta sem perder nada do que foi digitado. Bloqueado durante o envio.
+  function voltarParaDados() {
+    if (enviando) return;
+
+    pagamento.mostrarErroEnvio("");
+    mostrarEtapa(ETAPA_DADOS, { foco: btnContinuar });
   }
 
   function limparEstadoFormulario() {
@@ -376,9 +423,10 @@ export function iniciarFormularioPedido() {
     if (erroRecebimento) erroRecebimento.textContent = "";
     grupoRecebimento?.removeAttribute("aria-invalid");
 
-    mostrarErroEnvio("");
     frete = 0;
     definirModoEntrega(false);
+    seletorLocalizacao.limpar();
+    pagamento.resetar();
     atualizarContadorObservacoes();
   }
 
@@ -391,11 +439,8 @@ export function iniciarFormularioPedido() {
     calcularTotal();
 
     overlay.style.display = "block";
-    form.scrollTop = 0;
     travarScroll(DONO_SCROLL);
-
-    // Foca o diálogo (e não o primeiro campo) para não abrir o teclado no celular.
-    requestAnimationFrame(() => form.focus({ preventScroll: true }));
+    mostrarEtapa(ETAPA_DADOS);
   }
 
   function fechar() {
@@ -405,6 +450,7 @@ export function iniciarFormularioPedido() {
 
     overlay.style.display = "none";
     limparEstadoFormulario();
+    mostrarEtapa(ETAPA_DADOS);
     destravarScroll(DONO_SCROLL);
 
     if (ultimoFoco && document.contains(ultimoFoco)) ultimoFoco.focus?.();
@@ -422,11 +468,20 @@ export function iniciarFormularioPedido() {
   });
 
   overlay.addEventListener("click", (evento) => {
-    if (cliqueComecouNoFundo && evento.target === overlay) fechar();
+    if (cliqueComecouNoFundo && evento.target === overlay) {
+      // Na etapa 2, "fora" volta para os dados (nada se perde); na 1, fecha.
+      if (etapa === ETAPA_PAGAMENTO) voltarParaDados();
+      else fechar();
+    }
     cliqueComecouNoFundo = false;
   });
 
-  ativarArmadilhaFoco({ container: form, estaAtivo: estaAberto, aoEscape: fechar });
+  ativarArmadilhaFoco({ container: form, estaAtivo: () => estaNaEtapa(ETAPA_DADOS), aoEscape: fechar });
+  ativarArmadilhaFoco({
+    container: pagamento.elemento,
+    estaAtivo: () => estaNaEtapa(ETAPA_PAGAMENTO),
+    aoEscape: voltarParaDados,
+  });
 
   // ═══════════════════════════════════════════════════════════
   // ENVIO DO PEDIDO
@@ -435,6 +490,7 @@ export function iniciarFormularioPedido() {
   function coletarDados() {
     const entrega = entregaSelecionada();
     const valor = (id) => normalizarEspacos($(id)?.value);
+    const posicao = entrega ? seletorLocalizacao.obter() : null;
 
     return {
       nome: valor("input-nome"),
@@ -449,14 +505,21 @@ export function iniciarFormularioPedido() {
             rua: valor("input-rua"),
             numero: valor("input-numero"),
             complemento: valor("input-complemento"),
+            latitude: posicao?.latitude ?? null,
+            longitude: posicao?.longitude ?? null,
           }
         : null,
       observacao: (observacoes?.value ?? "").trim(),
     };
   }
 
-  function abrirWhatsapp(dados, itens, total) {
-    const mensagem = montarMensagemWhatsapp({ ...dados, itens, total });
+  function abrirWhatsapp(dados, itens, total, formaPagamento) {
+    const mensagem = montarMensagemWhatsapp({
+      ...dados,
+      itens,
+      total,
+      pagamento: rotuloFormaPagamento(formaPagamento),
+    });
     const url = montarUrlWhatsapp(mensagem);
 
     const janela = window.open(url, "_blank");
@@ -471,8 +534,22 @@ export function iniciarFormularioPedido() {
     return "Ocorreu um erro inesperado ao enviar o pedido. Tente novamente.";
   }
 
-  async function aoEnviar(evento) {
+  // Etapa 1 → 2. NÃO envia nada: só valida os dados e abre o pagamento.
+  function aoContinuar(evento) {
     evento.preventDefault();
+
+    if (carrinho.getItens().length === 0) {
+      fechar();
+      return;
+    }
+
+    if (!validarTudo()) return;
+
+    irParaPagamento();
+  }
+
+  // Etapa 2: único ponto que dispara o POST.
+  async function confirmarPedido(formaPagamento) {
     if (enviando) return;
 
     const itens = carrinho.getItens();
@@ -481,7 +558,11 @@ export function iniciarFormularioPedido() {
       return;
     }
 
-    if (!validarTudo()) return;
+    // Segurança extra: se os dados da etapa 1 ficaram inválidos, volta para corrigir.
+    if (!validarTudo()) {
+      mostrarEtapa(ETAPA_DADOS);
+      return;
+    }
 
     const dados = coletarDados();
     const total = calcularTotal();
@@ -489,7 +570,7 @@ export function iniciarFormularioPedido() {
     const controller = new AbortController();
     envioController = controller;
 
-    mostrarErroEnvio("");
+    pagamento.mostrarErroEnvio("");
     definirEnviando(true);
 
     try {
@@ -500,6 +581,7 @@ export function iniciarFormularioPedido() {
           telefone: dados.telefone,
           tipoRecebimento: dados.recebimento,
           observacao: dados.observacao,
+          formaPagamento,
           endereco: dados.endereco,
           itens: itens.map(({ id, quantidade }) => ({ id, quantidade })),
         },
@@ -509,8 +591,9 @@ export function iniciarFormularioPedido() {
       // Formulário fechado/cancelado durante o envio: nada a mostrar.
       if (controller.signal.aborted && !estaAberto()) return;
 
+      envioController = null;
       definirEnviando(false);
-      mostrarErroEnvio(mensagemDeErro(erro));
+      pagamento.mostrarErroEnvio(mensagemDeErro(erro));
       return;
     }
 
@@ -520,10 +603,10 @@ export function iniciarFormularioPedido() {
     fechar();
     mostrarAviso("Pedido enviado com sucesso!", "sucesso");
 
-    if (WHATSAPP_CONFIG.abrirAposEnvio) abrirWhatsapp(dados, itens, total);
+    if (WHATSAPP_CONFIG.abrirAposEnvio) abrirWhatsapp(dados, itens, total, formaPagamento);
   }
 
-  form.addEventListener("submit", aoEnviar);
+  form.addEventListener("submit", aoContinuar);
 
   // ═══════════════════════════════════════════════════════════
   // ESTADO INICIAL
