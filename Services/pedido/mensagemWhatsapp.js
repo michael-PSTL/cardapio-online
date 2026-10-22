@@ -13,7 +13,7 @@ import { aplicarMascaraCep, aplicarMascaraTelefone } from "../core/mascaras.js";
 // └─────────────────────────────────────────────────────────┘
 export const WHATSAPP_CONFIG = {
   numero: "5598984975025",
-  abrirAposEnvio: true,
+  abrirAposEnvio: false,
 };
 
 const CODIGO_PAIS = "+55";

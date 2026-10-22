@@ -17,7 +17,7 @@ import { normalizarEspacos, somenteDigitos } from "./core/formatadores.js";
 // │ 🔧 CONFIGURAÇÃO — LANCHONETE E ENDPOINT                   │
 // └─────────────────────────────────────────────────────────┘
 export const API_CONFIG = {
-  lanchoneteId: "lanchonete-01",
+  lanchoneteId: "tempero-caseiro-9nHk-0nud-01kn",
   // URL que recebe o POST do pedido. Pode ser relativa ("/pedido")
   // ou absoluta ("https://api.seudominio.com/pedido").
   endpoint: "/pedido",
@@ -55,12 +55,17 @@ export const FORMAS_PAGAMENTO = {
 
 /** true se a chave existe no enum e está ativa. */
 export function formaPagamentoAtiva(chave) {
-  return Object.hasOwn(FORMAS_PAGAMENTO.opcoes, chave) && FORMAS_PAGAMENTO.opcoes[chave].ativo === true;
+  return (
+    Object.hasOwn(FORMAS_PAGAMENTO.opcoes, chave) &&
+    FORMAS_PAGAMENTO.opcoes[chave].ativo === true
+  );
 }
 
 /** Texto para o cliente ("Pix online"); devolve a própria chave se desconhecida. */
 export function rotuloFormaPagamento(chave) {
-  return Object.hasOwn(FORMAS_PAGAMENTO.opcoes, chave) ? FORMAS_PAGAMENTO.opcoes[chave].rotulo : String(chave ?? "");
+  return Object.hasOwn(FORMAS_PAGAMENTO.opcoes, chave)
+    ? FORMAS_PAGAMENTO.opcoes[chave].rotulo
+    : String(chave ?? "");
 }
 
 // ┌─────────────────────────────────────────────────────────┐
@@ -121,7 +126,10 @@ function resolverFormaPagamento(escolhida) {
   const chave = texto(escolhida);
 
   exigir(chave, "Escolha a forma de pagamento.");
-  exigir(formaPagamentoAtiva(chave), `Forma de pagamento "${chave}" não está disponível. Escolha outra.`);
+  exigir(
+    formaPagamentoAtiva(chave),
+    `Forma de pagamento "${chave}" não está disponível. Escolha outra.`,
+  );
 
   return chave;
 }
@@ -149,7 +157,10 @@ function resolverCoordenadas(origem) {
     return { latitude: null, longitude: null };
   }
 
-  exigir(!semLatitude && !semLongitude, "Localização incompleta: informe latitude e longitude.");
+  exigir(
+    !semLatitude && !semLongitude,
+    "Localização incompleta: informe latitude e longitude.",
+  );
 
   const latitude = Number(origem.latitude);
   const longitude = Number(origem.longitude);
@@ -182,7 +193,10 @@ function montarEndereco(endereco) {
 }
 
 function montarItens(itens) {
-  exigir(Array.isArray(itens) && itens.length > 0, "O pedido precisa ter ao menos um item.");
+  exigir(
+    Array.isArray(itens) && itens.length > 0,
+    "O pedido precisa ter ao menos um item.",
+  );
 
   return itens.map((item) => {
     const produtoId = texto(item?.id);
@@ -204,15 +218,23 @@ function montarItens(itens) {
  */
 export function montarPayload(pedido) {
   exigir(pedido && typeof pedido === "object", "Pedido inválido.");
-  exigir(texto(API_CONFIG.lanchoneteId), "lanchoneteId não configurado em API_CONFIG.");
+  exigir(
+    texto(API_CONFIG.lanchoneteId),
+    "lanchoneteId não configurado em API_CONFIG.",
+  );
 
   const nomeCliente = texto(pedido.nome);
-  const emailCliente = String(pedido.email ?? "").trim().toLowerCase();
+  const emailCliente = String(pedido.email ?? "")
+    .trim()
+    .toLowerCase();
   const telefoneCliente = somenteDigitos(pedido.telefone);
   const entrega = pedido.tipoRecebimento === "entrega";
 
   exigir(nomeCliente, "Informe o nome do cliente.");
-  exigir(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailCliente), "Informe um e-mail válido.");
+  exigir(
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailCliente),
+    "Informe um e-mail válido.",
+  );
   exigir(
     telefoneCliente.length === 10 || telefoneCliente.length === 11,
     "Informe um telefone válido com DDD.",
@@ -252,7 +274,8 @@ function lerCorpoSeguro(resposta) {
 function mensagemDoServidor(corpo) {
   if (!corpo) return "";
   if (typeof corpo === "string") return corpo.slice(0, 200);
-  const candidata = corpo.mensagem ?? corpo.message ?? corpo.erro ?? corpo.error;
+  const candidata =
+    corpo.mensagem ?? corpo.message ?? corpo.erro ?? corpo.error;
   return typeof candidata === "string" ? candidata.slice(0, 200) : "";
 }
 
@@ -266,7 +289,9 @@ export async function enviarPedido(pedido, { signal } = {}) {
 
   const endpoint = texto(API_CONFIG.endpoint);
   if (!endpoint) {
-    throw new ErroApi("Endpoint da API não configurado em API_CONFIG.endpoint.");
+    throw new ErroApi(
+      "Endpoint da API não configurado em API_CONFIG.endpoint.",
+    );
   }
 
   const controller = new AbortController();
@@ -282,9 +307,12 @@ export async function enviarPedido(pedido, { signal } = {}) {
   }, API_CONFIG.timeoutMs);
 
   try {
-    const resposta = await fetch(endpoint, {
+    const resposta = await fetch(`http://localhost:8080${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify(payload),
       signal: controller.signal,
     });
@@ -294,7 +322,8 @@ export async function enviarPedido(pedido, { signal } = {}) {
     if (!resposta.ok) {
       const detalhe = mensagemDoServidor(corpo);
       throw new ErroApi(
-        detalhe || `O servidor recusou o pedido (erro ${resposta.status}). Tente novamente.`,
+        detalhe ||
+          `O servidor recusou o pedido (erro ${resposta.status}). Tente novamente.`,
         { status: resposta.status, detalhes: corpo },
       );
     }
@@ -312,9 +341,12 @@ export async function enviarPedido(pedido, { signal } = {}) {
       );
     }
 
-    throw new ErroApi("Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.", {
-      causa: erro,
-    });
+    throw new ErroApi(
+      "Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.",
+      {
+        causa: erro,
+      },
+    );
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", aoCancelarDeFora);
