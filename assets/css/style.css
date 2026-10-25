@@ -1,11 +1,8 @@
-/* ═══════════════════════════════════════════════════════════
-   BASE — tokens de design, reset, header e cabeçalhos de seção
-   Referência visual: fundo preto quente, destaque laranja,
-   cards escuros com borda laranja-acastanhada e cantos arredondados.
-   ═══════════════════════════════════════════════════════════ */
-
+/* ==========================================================================
+   1. VARIÁVEIS DE DESIGN (TOKENS)
+   ========================================================================== */
 :root {
-  /* cor de destaque */
+  /* Cores de Destaque */
   --primary: #f97b1c;
   --primary-rgb: 249, 123, 28;
   --primary-light: #ff9440;
@@ -13,32 +10,32 @@
   --primary-glow: rgba(var(--primary-rgb), 0.25);
   --gold: #c9a84c;
 
-  /* superfícies (do mais escuro ao mais claro) */
+  /* Superfícies e Fundos */
   --bg-void: #080706;
   --bg-deep: #0d0b0a;
   --bg-card: #1c1a18;
   --bg-surface: #242120;
   --bg-raised: #2a2725;
 
-  /* texto */
+  /* Texto */
   --text: #f5f0eb;
   --text-muted: #a39d96;
   --text-faint: #38322d;
 
-  /* estados */
+  /* Estados de Feedback */
   --success: #2e8b57;
   --success-text: #3ecf8e;
   --danger: #e04b3f;
   --danger-text: #ff6b6b;
   --warning: #f5b84a;
 
-  /* bordas */
+  /* Bordas */
   --border: rgba(var(--primary-rgb), 0.14);
   --border-hover: rgba(var(--primary-rgb), 0.45);
   --card-border: rgba(var(--primary-rgb), 0.28);
   --card-border-hover: rgba(var(--primary-rgb), 0.6);
 
-  /* forma e sombra */
+  /* Arredondamento, Sombras e Animações */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -47,25 +44,56 @@
   --shadow-glow: 0 0 40px rgba(var(--primary-rgb), 0.14);
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* tipografia */
+  /* Tipografia */
   --font-display: 'Outfit', 'DM Sans', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
 
-  /* layout */
+  /* Layout Base */
   --header-h: 80px;
   --container: 1200px;
 }
 
+/* ==========================================================================
+   2. RESET BASE & REGRAS GERAIS
+   ========================================================================== */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
-  /* ─── REMOVE A "PISCADA" AZUL AO TOCAR NO MOBILE ─── */
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 }
 
+/* ==========================================================================
+   3. BARRA DE ROLAGEM (SCROLLBAR)
+   ========================================================================== */
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0b0a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9630f96;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f97c1c96;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d9630f96 #0d0b0a;
+}
+/* ==========================================================================
+   4. ESTRUTURA GLOBAL (HTML & BODY)
+   ========================================================================== */
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
@@ -75,7 +103,7 @@ html {
   html { scroll-behavior: auto; }
 }
 
-/* remove também o contorno padrão no toque, mantendo o foco por teclado */
+/* Foco e Seleção via Teclado/Toque */
 a, button, input, textarea, select, label,
 [role="button"], [tabindex] {
   -webkit-tap-highlight-color: transparent;
@@ -92,6 +120,7 @@ label:focus:not(:focus-visible) {
   outline-offset: 3px;
 }
 
+/* Preenchimento automático do Chrome */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -110,6 +139,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Brilho de Fundo da Página */
 body::before {
   content: '';
   position: fixed;
@@ -127,7 +157,9 @@ section {
   z-index: 1;
 }
 
-/* ─── HEADER ─── */
+/* ==========================================================================
+   5. CABEÇALHO & NAVEGAÇÃO (DESKTOP)
+   ========================================================================== */
 header {
   position: fixed;
   top: 0;
@@ -200,7 +232,9 @@ header {
 .nav:hover { color: var(--text); }
 .nav:hover::after { transform: translateX(-50%) scaleX(1); }
 
-/* ─── HAMBURGER ─── */
+/* ==========================================================================
+   6. MENU HAMBÚRGUER & NAVEGAÇÃO MOBILE
+   ========================================================================== */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -220,7 +254,7 @@ header {
   display: block;
 }
 
-/* ─── MOBILE NAV ─── */
+/* Painel Lateral Mobile */
 .nav2 {
   display: flex;
   position: fixed;
@@ -261,10 +295,9 @@ header {
   background: rgba(var(--primary-rgb), 0.05);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CABEÇALHO DE SEÇÃO (compartilhado por Cardápio, Avaliações
-   e Localização): "— RÓTULO —" + título + subtítulo, centralizados
-   ═══════════════════════════════════════════════════════════ */
+/* ==========================================================================
+   7. CABEÇALHOS DE SEÇÃO
+   ========================================================================== */
 .section-header {
   display: flex;
   flex-direction: column;
@@ -295,7 +328,6 @@ header {
 
 .section-eyebrow::after { transform: scaleX(-1); }
 
-/* variante alinhada à esquerda (hero): só a linha da esquerda */
 .section-eyebrow--esq::after { display: none; }
 .section-eyebrow--esq::before { background: var(--primary); }
 
@@ -324,13 +356,15 @@ header {
   line-height: 1.7;
 }
 
-/* ─── TRAVAR SCROLL COM OVERLAY ABERTO ─── */
+/* Trava de Scroll do Body */
 body.scroll-travado {
   overflow: hidden;
   touch-action: none;
 }
 
-/* ─── AVISO TEMPORÁRIO (toast) ─── */
+/* ==========================================================================
+   8. AVISOS & TOAST NOTIFICATIONS
+   ========================================================================== */
 .aviso-regiao {
   position: fixed;
   left: 50%;
@@ -367,7 +401,9 @@ body.scroll-travado {
   .aviso { animation: none; }
 }
 
-/* ─── RESPONSIVO ─── */
+/* ==========================================================================
+   9. MEDIA QUERIES (RESPONSIVIDADE)
+   ========================================================================== */
 @media (max-width: 768px) {
   .nav { display: none; }
   .hamburger { display: flex; }
