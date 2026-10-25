@@ -125,61 +125,35 @@
   line-height: 1.3;
 }
 
-/* ─── PRATO (imagem circular com brilho e anel) ─── */
+/* ─── PRATO (apenas a imagem, girando 360° sem parar) ─── */
 .hero-visual {
   display: flex;
   justify-content: center;
 }
 
 .hero-prato {
-  position: relative;
   width: min(100%, 520px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
 }
 
-/* brilho atrás do prato */
-.hero-prato::before {
-  content: '';
-  position: absolute;
-  inset: -8%;
-  background: radial-gradient(circle, rgba(var(--primary-rgb), 0.22) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-/* anel tracejado */
-.hero-prato::after {
-  content: '';
-  position: absolute;
-  inset: -3%;
-  border-radius: 50%;
-  border: 1px dashed rgba(var(--primary-rgb), 0.35);
-  animation: hero-giro 60s linear infinite;
-  pointer-events: none;
-}
-
 .hero-prato img {
-  position: relative;
-  z-index: 1;
-  width: 92%;
-  height: 92%;
-  object-fit: cover;
-  object-position: 42% 55%;
-  border-radius: 50%;
-  border: 6px solid var(--bg-surface);
-  box-shadow:
-    0 0 0 1px var(--card-border),
-    0 30px 70px rgba(0, 0, 0, 0.65),
-    0 0 80px rgba(var(--primary-rgb), 0.15);
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: hero-giro 24s linear infinite;
+  will-change: transform;
 }
 
 @keyframes hero-giro {
-  to { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-prato::after { animation: none; }
+  .hero-prato img { animation: none; }
   .hero-link,
   .hero-link svg { transition: none; }
 }
