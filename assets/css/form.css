@@ -377,7 +377,7 @@ form.pedido-form::-webkit-scrollbar-thumb {
   display: grid;
   grid-template-rows: 0fr;
   margin-top: 0;
-  padding: 5px 0;
+  padding: 10px 0;
   transition: grid-template-rows 0.35s ease, margin-top 0.35s ease;
 }
 
