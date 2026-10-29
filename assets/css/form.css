@@ -377,7 +377,7 @@ form.pedido-form::-webkit-scrollbar-thumb {
   display: grid;
   grid-template-rows: 0fr;
   margin-top: 0;
-  padding: 10px 0;
+  padding: 5px 0;
   transition: grid-template-rows 0.35s ease, margin-top 0.35s ease;
 }
 
@@ -676,4 +676,67 @@ textarea.input-field {
 
 @media (max-width: 380px) {
   .endereco-fields { grid-template-columns: 1fr; }
+}
+
+/* ─── PIX (etapa 3, criada por JS) ─── */
+.pix-qr {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.pix-qr[hidden] { display: none; }
+
+/* fundo branco fixo: o QR Code precisa de contraste para ser lido pelo banco */
+.pix-qr-imagem {
+  width: 220px;
+  height: 220px;
+  max-width: 100%;
+  padding: 10px;
+  background: #fff;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+.section[hidden] { display: none; }
+
+.pix-codigo {
+  min-height: 96px;
+  margin-bottom: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  word-break: break-all;
+  resize: none;
+}
+
+.pix-copiar { width: 100%; }
+.pix-copiar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.pix-status {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.pix-status:empty { display: none; }
+.pix-status[data-estado="ok"] { color: var(--success-text); }
+.pix-status[data-estado="aviso"] { color: var(--warning); }
+.pix-status[data-estado="erro"] { color: var(--danger-text); }
+
+.pix-link {
+  display: block;
+  margin: 0 auto 14px;
+  text-align: center;
+}
+
+.pix-link[hidden] { display: none; }
+
+.pix-form .btn[hidden] { display: none; }
+
+@media (max-width: 480px) {
+  .pix-qr-imagem { width: 200px; height: 200px; }
 }

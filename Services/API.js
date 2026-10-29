@@ -21,6 +21,8 @@ export const API_CONFIG = {
   // URL que recebe o POST do pedido. Pode ser relativa ("/pedido")
   // ou absoluta ("https://api.seudominio.com/pedido").
   endpoint: "/pedido",
+  // Origem do back-end. Vazio ("") usa a mesma origem da página.
+  baseUrl: "https://clientpayment-pvt6.onrender.com",
   timeoutMs: 15000,
   // DDI enviado antes do telefone (o formulário já guarda só DDD + número).
   codigoPais: "55",
@@ -28,7 +30,39 @@ export const API_CONFIG = {
   //         usar a localização atual).
   // true  → entrega exige a localização (o formulário bloqueia sem ela).
   coordenadasObrigatorias: false,
+
+  // ── PIX ONLINE ────────────────────────────────────────────
+  // Rota que informa o status de um pagamento. Use "{id}" no lugar do
+  // pagamentoId (ex.: "/pagamento/{id}/status"). A resposta pode ser
+  // { "status": "..." } ou o próprio texto do status.
+  // null → sem consulta automática: o cliente toca em "Já paguei".
+  statusEndpoint: null,
+  // Intervalo entre consultas e tempo máximo acompanhando o Pix.
+  pixIntervaloMs: 5000,
+  pixTempoMaximoMs: 15 * 60 * 1000,
+  // Valores do enum StatusPagamento do back-end (maiúsculas, sem acento).
+  // Ajuste para os nomes reais do seu enum.
+  statusConfirmados: ["APPROVED", "APROVADO", "PAGO", "PAID"],
+  statusEncerrados: [
+    "REJECTED",
+    "REJEITADO",
+    "CANCELLED",
+    "CANCELADO",
+    "EXPIRED",
+    "EXPIRADO",
+    "FAILED",
+    "FALHOU",
+  ],
 };
+
+/** Junta baseUrl + caminho (URLs absolutas passam como estão). */
+function montarUrl(caminho) {
+  const destino = normalizarEspacos(caminho);
+  if (/^https?:\/\//i.test(destino)) return destino;
+
+  const base = normalizarEspacos(API_CONFIG.baseUrl).replace(/\/+$/, "");
+  return `${base}${destino.startsWith("/") ? "" : "/"}${destino}`;
+}
 
 // ┌─────────────────────────────────────────────────────────┐
 // │ 🔧 CONFIGURAÇÃO — FORMA DE PAGAMENTO                      │
@@ -77,6 +111,9 @@ export const TIPOS_RECEBIMENTO = {
   entrega: "ENTREGA",
   buscar: "RETIRADA",
 };
+
+/** Forma de pagamento que devolve QR Code (PixResponse) em vez de só "200 OK". */
+export const FORMA_PIX_ONLINE = "PIX_ONLINE";
 
 // ═══════════════════════════════════════════════════════════
 // ERROS
@@ -307,7 +344,7 @@ export async function enviarPedido(pedido, { signal } = {}) {
   }, API_CONFIG.timeoutMs);
 
   try {
-    const resposta = await fetch(`http://localhost:8080${endpoint}`, {
+    const resposta = await fetch(montarUrl(endpoint), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -347,6 +384,118 @@ export async function enviarPedido(pedido, { signal } = {}) {
         causa: erro,
       },
     );
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", aoCancelarDeFora);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PIX ONLINE
+//
+// Resposta do back-end (PixResponse):
+// { pagamentoId, status, valor, qrCode, qrCodeBase64, ticketUrl }
+//   qrCode        → texto do "Pix copia e cola"
+//   qrCodeBase64  → imagem PNG do QR Code (com ou sem prefixo data:)
+//   ticketUrl     → página externa do pagamento (opcional)
+// ═══════════════════════════════════════════════════════════
+
+const BASE64_VALIDO = /^[A-Za-z0-9+/=\s]+$/;
+
+function urlHttpsSegura(valor) {
+  try {
+    const url = new URL(String(valor ?? "").trim());
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function imagemQrCode(valor) {
+  const bruto = String(valor ?? "").trim();
+  if (!bruto) return "";
+
+  if (/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(bruto)) return bruto;
+  return BASE64_VALIDO.test(bruto) ? `data:image/png;base64,${bruto.replace(/\s+/g, "")}` : "";
+}
+
+/**
+ * Valida e normaliza a resposta do Pix.
+ * Lança ErroApi se não houver como o cliente pagar (sem QR Code e sem código).
+ */
+export function lerRespostaPix(dados) {
+  const origem = dados && typeof dados === "object" ? dados : {};
+
+  const resposta = {
+    pagamentoId: texto(origem.pagamentoId),
+    status: texto(origem.status).toUpperCase(),
+    valor: semValor(origem.valor) || !(Number(origem.valor) > 0) ? null : Number(origem.valor),
+    qrCode: String(origem.qrCode ?? "").trim(),
+    qrCodeSrc: imagemQrCode(origem.qrCodeBase64),
+    ticketUrl: urlHttpsSegura(origem.ticketUrl),
+  };
+
+  if (!resposta.qrCode && !resposta.qrCodeSrc) {
+    throw new ErroApi(
+      "O servidor não devolveu o código do Pix. Tente novamente ou escolha outra forma de pagamento.",
+      { detalhes: dados },
+    );
+  }
+
+  return resposta;
+}
+
+/** true quando existe rota configurada para acompanhar o pagamento. */
+export function acompanhamentoPixAtivo() {
+  return Boolean(texto(API_CONFIG.statusEndpoint));
+}
+
+/** "confirmado" | "encerrado" (recusado/expirado) | "pendente". */
+export function classificarStatusPagamento(status) {
+  const valor = texto(status).toUpperCase();
+  if (API_CONFIG.statusConfirmados.includes(valor)) return "confirmado";
+  if (API_CONFIG.statusEncerrados.includes(valor)) return "encerrado";
+  return "pendente";
+}
+
+/**
+ * Consulta o status do pagamento (GET). Devolve o texto do status.
+ * Lança ErroApi em falha; quem chama decide se tenta de novo.
+ */
+export async function consultarStatusPagamento(pagamentoId, { signal } = {}) {
+  const modelo = texto(API_CONFIG.statusEndpoint);
+  const id = texto(pagamentoId);
+
+  if (!modelo || !id) throw new ErroApi("Acompanhamento do pagamento não configurado.");
+
+  const controller = new AbortController();
+  const aoCancelarDeFora = () => controller.abort();
+  if (signal?.aborted) controller.abort();
+  else signal?.addEventListener("abort", aoCancelarDeFora, { once: true });
+
+  const timer = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+
+  try {
+    const resposta = await fetch(montarUrl(modelo.replace("{id}", encodeURIComponent(id))), {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    });
+
+    const corpo = await lerCorpoSeguro(resposta);
+
+    if (!resposta.ok) {
+      throw new ErroApi(
+        mensagemDoServidor(corpo) || `Falha ao consultar o pagamento (erro ${resposta.status}).`,
+        { status: resposta.status, detalhes: corpo },
+      );
+    }
+
+    const status = typeof corpo === "string" ? corpo : corpo?.status;
+    return texto(status).replace(/^"|"$/g, "");
+  } catch (erro) {
+    if (erro instanceof ErroApi) throw erro;
+    throw new ErroApi("Não foi possível consultar o pagamento.", { causa: erro });
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", aoCancelarDeFora);

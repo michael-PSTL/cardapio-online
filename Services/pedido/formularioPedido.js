@@ -1,13 +1,23 @@
-// Formulário de pedido (interface) em DUAS etapas dentro do mesmo modal:
+// Formulário de pedido (interface) em até TRÊS etapas dentro do mesmo modal:
 //   1. dados  → nome, contato, recebimento/endereço (+ localização atual)
 //   2. pagamento → forma de pagamento; só aqui o pedido é enviado (POST).
+//   3. pix → só para PIX_ONLINE: QR Code / copia e cola devolvidos pela API.
 // Este módulo orquestra: abrir/fechar, etapas, campos, CEP, frete/total e envio.
 // As regras vivem em módulos próprios:
 //   validacao.js (regras) · viaCep.js (rede) · API.js (envio do pedido)
-//   formularioPagamento.js (tela da etapa 2) · seletorLocalizacao.js (lat/lng)
+//   formularioPagamento.js (tela da etapa 2) · formularioPix.js (tela da etapa 3)
+//   seletorLocalizacao.js (lat/lng)
 //   mensagemWhatsapp.js (texto do WhatsApp) · carrinhoStore.js (itens)
 
-import { API_CONFIG, enviarPedido, ErroApi, ErroPedido, rotuloFormaPagamento } from "../API.js";
+import {
+  API_CONFIG,
+  enviarPedido,
+  ErroApi,
+  ErroPedido,
+  FORMA_PIX_ONLINE,
+  lerRespostaPix,
+  rotuloFormaPagamento,
+} from "../API.js";
 import { ativarArmadilhaFoco } from "../core/armadilhaFoco.js";
 import { formatarMoeda, escaparHtml, normalizarEspacos, somenteDigitos } from "../core/formatadores.js";
 import {
@@ -20,6 +30,7 @@ import * as carrinho from "../carrinho/carrinhoStore.js";
 import { mostrarAviso } from "../ui/aviso.js";
 import { consultarCep } from "./viaCep.js";
 import { iniciarFormularioPagamento } from "./formularioPagamento.js";
+import { iniciarTelaPix } from "./formularioPix.js";
 import { iniciarSeletorLocalizacao } from "./seletorLocalizacao.js";
 import { WHATSAPP_CONFIG, montarMensagemWhatsapp, montarUrlWhatsapp } from "./mensagemWhatsapp.js";
 import {
@@ -35,6 +46,7 @@ const DONO_SCROLL = "formulario";
 const LIMITE_OBSERVACOES = 300;
 const ETAPA_DADOS = "dados";
 const ETAPA_PAGAMENTO = "pagamento";
+const ETAPA_PIX = "pix";
 
 /** @returns {{ abrir: () => void } | null} */
 export function iniciarFormularioPedido() {
@@ -74,6 +86,15 @@ export function iniciarFormularioPedido() {
     return null;
   }
 
+  // Etapa 3 (só Pix online): exibe o QR Code. Criada por JS dentro do overlay.
+  const pix = iniciarTelaPix({
+    container: overlay,
+    estaAtivo: () => estaNaEtapa(ETAPA_PIX),
+    aoFechar: () => fecharPix(),
+    aoConcluir: () => concluirPix(),
+    aoConfirmarPagamento: (mensagem) => mostrarAviso(mensagem, "sucesso"),
+  });
+
   const seletorLocalizacao = iniciarSeletorLocalizacao({
     botao: $("btn-localizacao"),
     botaoLimpar: $("btn-limpar-localizacao"),
@@ -86,6 +107,8 @@ export function iniciarFormularioPedido() {
   let frete = 0;
   let ultimoFoco = null;
   let enviando = false;
+  // Pedido já aceito pela API que está aguardando o pagamento do Pix.
+  let pedidoPix = null;
   let envioController = null;
   let cepController = null;
   let cepRequisicaoId = 0;
@@ -383,11 +406,17 @@ export function iniciarFormularioPedido() {
   function mostrarEtapa(nova, { foco } = {}) {
     etapa = nova;
 
-    const noPagamento = nova === ETAPA_PAGAMENTO;
-    form.hidden = noPagamento;
-    pagamento.elemento.hidden = !noPagamento;
+    const telas = {
+      [ETAPA_DADOS]: form,
+      [ETAPA_PAGAMENTO]: pagamento.elemento,
+      [ETAPA_PIX]: pix.elemento,
+    };
 
-    const alvo = noPagamento ? pagamento.elemento : form;
+    Object.entries(telas).forEach(([nome, tela]) => {
+      tela.hidden = nome !== nova;
+    });
+
+    const alvo = telas[nova] ?? form;
     alvo.scrollTop = 0;
 
     // Foca o diálogo (e não o primeiro campo) para não abrir o teclado no celular.
@@ -449,6 +478,8 @@ export function iniciarFormularioPedido() {
     definirEnviando(false);
 
     overlay.style.display = "none";
+    pix.resetar();
+    pedidoPix = null;
     limparEstadoFormulario();
     mostrarEtapa(ETAPA_DADOS);
     destravarScroll(DONO_SCROLL);
@@ -470,8 +501,9 @@ export function iniciarFormularioPedido() {
   overlay.addEventListener("click", (evento) => {
     if (cliqueComecouNoFundo && evento.target === overlay) {
       // Na etapa 2, "fora" volta para os dados (nada se perde); na 1, fecha.
+      // Na tela do Pix, clique fora é ignorado (evita perder o QR Code sem querer).
       if (etapa === ETAPA_PAGAMENTO) voltarParaDados();
-      else fechar();
+      else if (etapa === ETAPA_DADOS) fechar();
     }
     cliqueComecouNoFundo = false;
   });
@@ -573,8 +605,10 @@ export function iniciarFormularioPedido() {
     pagamento.mostrarErroEnvio("");
     definirEnviando(true);
 
+    let pixRecebido = null;
+
     try {
-      await enviarPedido(
+      const resultado = await enviarPedido(
         {
           nome: dados.nome,
           email: dados.email,
@@ -587,6 +621,9 @@ export function iniciarFormularioPedido() {
         },
         { signal: controller.signal },
       );
+
+      // Pix online: a API devolve o QR Code; sem ele o cliente não consegue pagar.
+      if (formaPagamento === FORMA_PIX_ONLINE) pixRecebido = lerRespostaPix(resultado.dados);
     } catch (erro) {
       // Formulário fechado/cancelado durante o envio: nada a mostrar.
       if (controller.signal.aborted && !estaAberto()) return;
@@ -600,10 +637,42 @@ export function iniciarFormularioPedido() {
     // Pedido aceito pela API: daqui em diante nada pode "desfazer" o sucesso.
     envioController = null;
     carrinho.limparCarrinho();
+
+    if (pixRecebido) {
+      // O pedido já existe no back-end (pendente). Mantém o modal aberto na tela do Pix.
+      pedidoPix = { dados, itens, total, formaPagamento };
+      definirEnviando(false);
+      limparEstadoFormulario();
+      pix.exibir(pixRecebido, total);
+      mostrarEtapa(ETAPA_PIX);
+      return;
+    }
+
     fechar();
     mostrarAviso("Pedido enviado com sucesso!", "sucesso");
 
     if (WHATSAPP_CONFIG.abrirAposEnvio) abrirWhatsapp(dados, itens, total, formaPagamento);
+  }
+
+  // Tela do Pix: fechar sem concluir (o pedido continua pendente no back-end).
+  function fecharPix() {
+    if (!estaNaEtapa(ETAPA_PIX)) return;
+
+    fechar();
+    mostrarAviso("Pedido registrado. O pagamento do Pix ainda está pendente.", "sucesso");
+  }
+
+  // Tela do Pix: "Já paguei" / "Concluir".
+  function concluirPix() {
+    if (!estaNaEtapa(ETAPA_PIX)) return;
+
+    const pedido = pedidoPix;
+    fechar();
+    mostrarAviso("Obrigado! Vamos confirmar o seu Pix e preparar o pedido.", "sucesso");
+
+    if (pedido && WHATSAPP_CONFIG.abrirAposEnvio) {
+      abrirWhatsapp(pedido.dados, pedido.itens, pedido.total, pedido.formaPagamento);
+    }
   }
 
   form.addEventListener("submit", aoContinuar);
